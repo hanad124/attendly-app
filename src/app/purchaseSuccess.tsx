@@ -34,7 +34,7 @@ export default function PurchaseSuccessPage() {
         
         <View className="px-8 w-full">
           <TouchableOpacity 
-            className="bg-blue-600 py-3 px-6 rounded-lg mt-10 w-full"
+            className="bg-primary py-3 px-6 rounded-lg mt-10 w-full"
             onPress={handleBackToHome}
           >
             <Text className="text-white text-center text-lg font-semibold">

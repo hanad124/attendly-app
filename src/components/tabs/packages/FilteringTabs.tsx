@@ -44,7 +44,7 @@ const IconWrapper = ({ icon: Icon, color = "black", size = 24 }) => {
 
 export default function FilteringTabs({
   tabs = PACKAGE_FILTER_TABS,
-  activeColor = "#007AFF",
+  activeColor = "#1F5FD9",
   inactiveColor = "black",
   onTabChange,
   showClearFilter = true,
@@ -162,7 +162,7 @@ function List({ packages }: { packages: Package[] }) {
           >
             <View className="flex flex-row gap-6">
               <View className="flex justify-center items-center border rounded-full p-4 border-gray-300">
-                <IconWrapper icon={pkg.icon} color="#4F8CF5" size={24} />
+                <IconWrapper icon={pkg.icon} color="#1F5FD9" size={24} />
               </View>
               <View>
                 <Text>{pkg.name}</Text>
@@ -181,7 +181,7 @@ function List({ packages }: { packages: Package[] }) {
               </View>
             </View>
             <View>
-              <Text className="font-semibold text-blue-600 text-xl">
+              <Text className="font-semibold text-[#1F5FD9] text-xl">
                 ${pkg.price.toFixed(2)}
               </Text>
             </View>

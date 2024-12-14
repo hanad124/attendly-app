@@ -1,8 +1,8 @@
 import { Tabs } from "expo-router";
 import { Home, LayoutGrid, Star, User, Menu } from "lucide-react-native";
-import BottomSheet from "@/components/BottomSheet";
 import { useBottomSheet } from "@/stores/bottomSheet";
 import { useLoadingModal } from "@/stores/loadingModal";
+
 
 export default function TabsLayout() {
   const { isOpen } = useBottomSheet();
@@ -28,6 +28,7 @@ export default function TabsLayout() {
             // borderRadius: 24,
             height: 90,
             backgroundColor: "rgba(255, 255, 255, 1)",
+          
             borderWidth: 1,
             borderColor: "rgba(0,0,0,0.1)",
             elevation: 0,
@@ -38,7 +39,7 @@ export default function TabsLayout() {
             padding: 4,
             paddingTop: 4,
           },
-          tabBarActiveTintColor: "#007AFF",
+          tabBarActiveTintColor: "#1F5FD9",
           tabBarInactiveTintColor: "#8E8E93",
           tabBarShowLabel: true,
           tabBarLabelStyle: {
@@ -60,6 +61,7 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="(packages)"
           options={{
+
             tabBarLabel: "Packages",
             tabBarIcon: ({ color }) => (
               <LayoutGrid size={20} color={color} strokeWidth={2} />

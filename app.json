@@ -1,13 +1,37 @@
 {
   "expo": {
-    "scheme": "acme",
-    "userInterfaceStyle": "automatic",
-    "orientation": "default",
-    "web": {
-      "output": "static",
-      "bundler": "metro"
+    "name": "Miirhse Data",
+    "scheme": "miirshe-data",
+    "slug": "miirshe-data",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./src/assets/images/splash-logo.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./src/assets/images/splash-logo.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#fff"
     },
-    "plugins": [
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.faaruuq.miirshe-data"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./src/assets/images/logo.png",
+        "backgroundColor": "#fff"
+      },
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.faaruuq.miirshe-data"
+    },
+    "web": {
+      "favicon": "./src/assets/images/favicon.png"
+    },
+     "plugins": [
       [
         "expo-router",
         {
@@ -15,7 +39,14 @@
         }
       ]
     ],
-    "name": "ip-app",
-    "slug": "ip-app"
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "f638a1c1-0e6c-42b9-b544-b9456a3f996a"
+      }
+    },
+    "owner": "faaruuq"
   }
 }

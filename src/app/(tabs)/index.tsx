@@ -1,25 +1,30 @@
+import DashboardBanner from "@/view/dashboard/banner";
+import DashboardHeader from "@/view/dashboard/DashboardHeader";
+import PopularProviders from "@/view/dashboard/popular-providers";
+import QuickMune from "@/view/dashboard/quick-mune";
+import Recomendation from "@/view/dashboard/recomendation";
 import { Link } from "expo-router";
-import { View, Text, TouchableOpacity } from "react-native";
-
-import { useBottomSheet } from "@/stores/bottomSheet";
-import Rewards from "./rewards";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  SafeAreaView,
+  ScrollView,
+} from "react-native";
 
 export default function HomeScreen() {
-  const { openSheet } = useBottomSheet();
-
-  const handleOpenSheet = () => {
-    openSheet(<Rewards />, { snapPoints: ["50%"] });
-  };
-
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text className="text-2xl">Home Screen</Text>
-      <Link href="/testPage">Go to Test Page</Link>
-
-      <TouchableOpacity onPress={handleOpenSheet}>
-        <Text>Open Bottom Sheet</Text>
-      </TouchableOpacity>
-
-    </View>
+    <SafeAreaView className="flex-1 bg-white pt-4 ">
+      <ScrollView>
+        <View className="px-6 mt-6">
+          <DashboardHeader />
+          <QuickMune />
+          <DashboardBanner />
+          <Recomendation />
+          <PopularProviders />
+        <Text className="mt-16">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem tempore .</Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }

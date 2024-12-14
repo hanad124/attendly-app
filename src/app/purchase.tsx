@@ -69,7 +69,7 @@ export default function PurchasePage() {
             key={method.name}
             className={`flex-row items-center py-3 px-4 rounded-lg mb-3 border-2 ${
               watch('paymentMethod') === method.name 
-                ? "border-blue-600 bg-blue-50" 
+                ? "border-primary bg-blue-50" 
                 : "border-gray-200 bg-white"
             }`}
             onPress={() => {
@@ -79,7 +79,7 @@ export default function PurchasePage() {
           >
             <Text className="text-lg font-medium flex-1">{method.name}</Text>
             {watch('paymentMethod') === method.name && (
-              <View className="w-6 h-6 rounded-full bg-blue-600 items-center justify-center">
+              <View className="w-6 h-6 rounded-full bg-primary items-center justify-center">
                 <View className="w-3 h-3 bg-white rounded-full" />
               </View>
             )}
@@ -134,7 +134,7 @@ export default function PurchasePage() {
           <Text className="text-gray-600">
             {pkg.minutes ? `${pkg.minutes} mins` : pkg.data} / {pkg.duration} days
           </Text>
-          <Text className="text-blue-600 font-bold mt-2">${pkg.price}</Text>
+          <Text className="text-primary font-bold mt-2">${pkg.price}</Text>
         </View>
 
         {/* Payment Method */}
@@ -145,7 +145,7 @@ export default function PurchasePage() {
             name="paymentMethod"
             render={({ field: { value } }) => (
               <TouchableOpacity 
-                className="bg-gray-100 active:border-2 focus:border-2 active:border-blue-600  focus:border-blue-600   py-3 px-4 rounded-lg flex-row justify-between items-center"
+                className="bg-gray-100 active:border-2 focus:border-2 active:border-primary  focus:border-primary   py-3 px-4 rounded-lg flex-row justify-between items-center"
                 onPress={handleOpenPaymentMethods}
               >
                 <Text className={`text-lg ${value ? 'text-black' : 'text-gray-400'}`}>
@@ -170,7 +170,7 @@ export default function PurchasePage() {
             name="senderNumber"
             render={({ field: { onChange, value } }) => (
               <TextInput
-                className={`bg-gray-100 py-3 px-4 rounded-lg text-lg border border-gray-300 active:border-2 focus:border-2 active:border-blue-600  focus:border-blue-600 ${
+                className={`bg-gray-100 py-3 px-4 rounded-lg text-lg border border-gray-300 active:border-2 focus:border-2 active:border-primary  focus:border-primary ${
                   errors.senderNumber ? 'border border-red-500' : ''
                 }`}
                 placeholder="Enter sender number"
@@ -196,7 +196,7 @@ export default function PurchasePage() {
             name="receiverNumber"
             render={({ field: { onChange, value } }) => (
               <TextInput
-                className={`bg-gray-100 py-3 px-4 rounded-lg text-lg border border-gray-300 active:border-2 focus:border-2 active:border-blue-600  focus:border-blue-600  ${
+                className={`bg-gray-100 py-3 px-4 rounded-lg text-lg border border-gray-300 active:border-2 focus:border-2 active:border-primary  focus:border-primary  ${
                   errors.receiverNumber ? 'border border-red-500' : ''
                 }`}
                 placeholder="Enter receiver number"
@@ -216,7 +216,7 @@ export default function PurchasePage() {
 
         {/* Submit Button */}
         <TouchableOpacity
-          className="bg-blue-600 py-3 px-4 rounded-lg mt-10"
+          className="bg-primary py-3 px-4 rounded-lg mt-10"
           onPress={handleSubmit(onSubmit)}
         >
           <Text className="text-white text-center text-lg font-semibold">

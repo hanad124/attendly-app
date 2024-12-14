@@ -45,7 +45,7 @@ const PackageDetails = ({ pkg }: { pkg: (typeof packages)[number] }) => (
     </View>
 
     <View className="flex flex-row items-center justify-center mt-4">
-      <Text className="font-medium text-3xl text-blue-600">${pkg.price}</Text>
+      <Text className="font-medium text-3xl text-primary">${pkg.price}</Text>
     </View>
 
     <View>
@@ -69,7 +69,7 @@ const PurchaseButton = ({ packageId }: { packageId: string }) => (
       asChild
     >
       <TouchableOpacity
-        className="bg-blue-600 p-4 rounded-lg w-full"
+        className="bg-primary p-4 rounded-lg w-full"
       >
         <Text className="text-white font-semibold text-center">Buy Now</Text>
       </TouchableOpacity>
