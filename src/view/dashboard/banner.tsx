@@ -5,7 +5,7 @@ import bannerImage from "@/assets/images/dashboard-banner-img.png";
 
 export default function DashboardBanner() {
   return (
-    <View className={` mt-10 `}>
+    <View className={` mt-6 `}>
       <View className="bg-primary w-full p-4 rounded-xl relative overflow-hidden">
         <View className="flex flex-row items-center justify-between ">
           <View>

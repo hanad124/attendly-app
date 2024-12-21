@@ -40,7 +40,7 @@ export default function DashboardHeader() {
                 <View
                   className="bg-yellow-400 h-full"
                   style={{
-                    width: `${(16 / 50) * 100}%`, // 50 GB total data plan
+                    width: `${(30 / 50) * 100}%`, // 50 GB total data plan
                     borderRadius: 999,
                   }}
                 />
@@ -50,8 +50,8 @@ export default function DashboardHeader() {
         </View>
 
         <View className="h-px border-[.8px] border-dashed border-white/20 my-6" />
-        <View className="flex flex-row items-center justify-between">
-          <View className="flex flex-row items-center gap-5">
+        <View className="flex flex-row items-center justify-between ">
+          <View className="flex flex-row items-center gap-2">
             <View className="bg-blue-400/30 w-fit max-w-fit rounded-full p-2">
               <Monitor
                 size={24}
@@ -66,7 +66,7 @@ export default function DashboardHeader() {
               <Text className="text-white/50">Days</Text>
             </View>
           </View>
-          <View className="flex flex-row items-center gap-5">
+          <View className="flex flex-row items-center gap-2">
             <View className="bg-blue-400/30 w-fit max-w-fit rounded-full p-2">
               <Phone
                 size={24}
@@ -81,7 +81,7 @@ export default function DashboardHeader() {
               <Text className="text-white/50">Min</Text>
             </View>
           </View>
-          <View className="flex flex-row items-center gap-5">
+          <View className="flex flex-row items-center gap-2">
             <View className="bg-blue-400/30 w-fit max-w-fit rounded-full p-2">
               <MessageSquareMore
                 size={24}

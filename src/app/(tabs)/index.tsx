@@ -1,13 +1,10 @@
 import DashboardBanner from "@/view/dashboard/banner";
 import DashboardHeader from "@/view/dashboard/DashboardHeader";
-import PopularProviders from "@/view/dashboard/popular-providers";
-import QuickMune from "@/view/dashboard/quick-mune";
+import QuickMenu from "@/view/dashboard/quick-menu";
+import RecentTransections from "@/view/dashboard/recentTransections";
 import Recomendation from "@/view/dashboard/recomendation";
-import { Link } from "expo-router";
 import {
   View,
-  Text,
-  TouchableOpacity,
   SafeAreaView,
   ScrollView,
 } from "react-native";
@@ -18,11 +15,10 @@ export default function HomeScreen() {
       <ScrollView>
         <View className="px-6 mt-6">
           <DashboardHeader />
-          <QuickMune />
+          <QuickMenu />
           <DashboardBanner />
           <Recomendation />
-          <PopularProviders />
-        <Text className="mt-16">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quidem tempore .</Text>
+          <RecentTransections />
         </View>
       </ScrollView>
     </SafeAreaView>

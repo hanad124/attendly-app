@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Miirhse Data",
-    "scheme": "miirshe-data",
-    "slug": "miirshe-data",
+    "name": "Attendly",
+    "scheme": "attendly",
+    "slug": "attendly",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/splash-logo.png",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.faaruuq.miirshe-data"
+      "bundleIdentifier": "com.faaruuq.attendly"
     },
     "android": {
       "adaptiveIcon": {
@@ -26,7 +26,7 @@
         "android.permission.ACCESS_NETWORK_STATE",
         "android.permission.RECORD_AUDIO"
       ],
-      "package": "com.faaruuq.miirshe-data"
+      "package": "com.faaruuq.attendly"
     },
     "web": {
       "favicon": "./src/assets/images/favicon.png"

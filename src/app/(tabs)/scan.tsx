@@ -3,12 +3,12 @@ import React from "react";
 import { Link } from "expo-router";
 import { Header } from "@/components/shared/Header";
 
-export default function Rewards() {
+export default function Scan() {
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Rewards" showBackButton={true} />
+      <Header title="Scan" showBackButton={true} />
       <View style={styles.header}>
-        <Text style={styles.title}>Rewards</Text>
+        <Text style={styles.title}>Scan QR-Code</Text>
 
         <Link href="/testPage">Go to Test Page</Link>
       </View>

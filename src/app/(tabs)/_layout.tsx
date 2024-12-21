@@ -1,8 +1,7 @@
 import { Tabs } from "expo-router";
-import { Home, LayoutGrid, Star, User, Menu } from "lucide-react-native";
+import { Home, User, ScanLine, BookText, Award } from "lucide-react-native";
 import { useBottomSheet } from "@/stores/bottomSheet";
 import { useLoadingModal } from "@/stores/loadingModal";
-
 
 export default function TabsLayout() {
   const { isOpen } = useBottomSheet();
@@ -28,7 +27,7 @@ export default function TabsLayout() {
             // borderRadius: 24,
             height: 90,
             backgroundColor: "rgba(255, 255, 255, 1)",
-          
+
             borderWidth: 1,
             borderColor: "rgba(0,0,0,0.1)",
             elevation: 0,
@@ -37,6 +36,7 @@ export default function TabsLayout() {
           },
           tabBarItemStyle: {
             padding: 4,
+            paddingHorizontal: 0,
             paddingTop: 4,
           },
           tabBarActiveTintColor: "#1F5FD9",
@@ -61,22 +61,62 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="(packages)"
           options={{
-
-            tabBarLabel: "Packages",
+            tabBarLabel: "Subjects",
             tabBarIcon: ({ color }) => (
-              <LayoutGrid size={20} color={color} strokeWidth={2} />
+              <BookText size={20} color={color} strokeWidth={2} />
             ),
           }}
         />
         <Tabs.Screen
-          name="rewards"
+          name="scan"
           options={{
-            tabBarLabel: "Rewards",
+            tabBarLabel: () => null,
             tabBarIcon: ({ color }) => (
-              <Star size={20} color={color} strokeWidth={2} />
+              <ScanLine size={32} color="#FFFFFF" strokeWidth={2.5} />
+            ),
+            tabBarItemStyle: {
+              backgroundColor: '#1F5FD9',
+              width: 70,
+              height: 70,
+              borderRadius: 22,
+              marginTop: -32,
+              position: 'relative',
+              borderWidth: 3,
+              borderColor: '#4B82E5',
+              shadowColor: "#1F5FD9",
+              shadowOffset: {
+                width: 0,
+                height: 6,
+              },
+              shadowOpacity: 0.35,
+              shadowRadius: 6,
+              elevation: 10,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              padding: 0,
+            },
+            tabBarIconStyle: {
+              height: '100%',
+              width: '100%',
+              margin: 0,
+              padding: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }
+          }}
+        />
+        <Tabs.Screen
+          name="leader-board"
+          options={{
+            tabBarLabel: "Board",
+            tabBarIcon: ({ color }) => (
+              <Award size={20} color={color} strokeWidth={2} />
             ),
           }}
         />
+
         <Tabs.Screen
           name="account"
           options={{
