@@ -10,27 +10,27 @@ export default function DashboardBanner() {
         <View className="flex flex-row items-center justify-between ">
           <View>
             <Text className="text-xl font-semibold text-white mb-2">
-              Super Charge Your Internet
+              Somali Cultural Festival
             </Text>
-            <Text className="text-white/90 my-1">Get our exclusive promo</Text>
-            <Text className="text-white/90 my-1">Package just for you 🚀 </Text>
+            <Text className="text-white/90 my-1">A Week of Heritage at</Text>
+            <Text className="text-white/90 my-1">Jamhuriya University</Text>
             <View className="flex flex-row relative z-10">
               <TouchableOpacity className="bg-white p-3 px-10 rounded-lg mt-4  w-fit flex-2">
                 <Text className="text-primary text-lg font-semibold">
-                  Get Started
+                  Read more
                 </Text>
               </TouchableOpacity>
               <View></View>
             </View>
           </View>
           <View className="absolute right-0 bg-blue-200/20 rounded-full opacity-50 scale-125 w-[14rem] h-[14rem]" />
-          
+
           <View className="absolute right-0 bg-blue-300/30 rounded-full opacity-50 scale-120 w-[14rem] h-[14rem]" />
-            <Image
-              source={bannerImage}
-              className={`absolute -bottom-[1.3rem] -right-6 min-w-28 min-h-full h-[14rem] w-[10rem]`}
-              resizeMode="contain"
-            />
+          <Image
+            source={bannerImage}
+            className={`absolute -bottom-[8.5rem] -right-10  min-h-full h-[26rem] w-[16rem]`}
+            resizeMode="contain"
+          />
         </View>
       </View>
     </View>

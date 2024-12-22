@@ -1,15 +1,15 @@
 import { View, Text } from "react-native";
 import React from "react";
-import { Grid2X2Plus, Monitor, Send, Wifi } from "lucide-react-native";
+import { Grid2X2Plus, Monitor, Send, SquareSigma, BookOpenText } from "lucide-react-native";
 
 export default function QuickMenu() {
   return (
     <View className={` mt-6 `}>
       <Text className="text-lg font-medium text-gray-800 mb-1 text-left">
-        Quick Menu
+        Periods
       </Text>
       <View className="flex flex-row items-center gap-8 mt-3">
-        <View className="flex flex-col gap-2 ">
+        <View className="flex flex-col items-center gap-2 ">
           <View>
             <View className=" border border-gray-200 rounded-full p-4 flex justify-center items-center w-fit">
               <Monitor
@@ -21,11 +21,11 @@ export default function QuickMenu() {
               />
             </View>
           </View>
-          <Text className="text-secondary text-sm">Internet</Text>
+          <Text className="text-secondary text-sm">FIT</Text>
         </View>
         <View className="flex flex-col gap-2 justify-center items-center">
           <View className=" border border-gray-200 rounded-full p-4">
-            <Send
+            <BookOpenText
               size={24}
               color="#1F5FD9"
               className=" w-10 h-10"
@@ -33,11 +33,11 @@ export default function QuickMenu() {
               height={24}
             />
           </View>
-          <Text className="text-secondary text-sm">Send Gift</Text>
+          <Text className="text-secondary text-sm">Islamic</Text>
         </View>
         <View className="flex flex-col gap-2 justify-center items-center">
           <View className=" border border-gray-200 rounded-full p-4">
-            <Wifi
+            <SquareSigma
               size={24}
               color="#1F5FD9"
               className=" w-10 h-10"
@@ -45,7 +45,7 @@ export default function QuickMenu() {
               height={24}
             />
           </View>
-          <Text className="text-secondary text-sm">Test Speed</Text>
+          <Text className="text-secondary text-sm">Math-1</Text>
         </View>
         <View className="flex flex-col gap-2 justify-center items-center">
           <View className=" border border-gray-200 rounded-full p-4">

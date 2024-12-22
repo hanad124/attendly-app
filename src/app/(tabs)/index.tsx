@@ -1,8 +1,7 @@
 import DashboardBanner from "@/view/dashboard/banner";
 import DashboardHeader from "@/view/dashboard/DashboardHeader";
+import LeaderBoard from "@/view/dashboard/LeaderBoard";
 import QuickMenu from "@/view/dashboard/quick-menu";
-import RecentTransections from "@/view/dashboard/recentTransections";
-import Recomendation from "@/view/dashboard/recomendation";
 import {
   View,
   SafeAreaView,
@@ -17,8 +16,8 @@ export default function HomeScreen() {
           <DashboardHeader />
           <QuickMenu />
           <DashboardBanner />
-          <Recomendation />
-          <RecentTransections />
+
+          <LeaderBoard />
         </View>
       </ScrollView>
     </SafeAreaView>
