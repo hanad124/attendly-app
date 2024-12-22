@@ -97,10 +97,7 @@ export const Overlay = ({ onQrDetected = false }: OverlayProps) => {
 
   return (
     <Canvas
-      style={[
-        Platform.OS === "android" ? { flex: 1 } : StyleSheet.absoluteFillObject,
-        { backgroundColor: "transparent" }
-      ]}
+      style={[StyleSheet.absoluteFillObject, { backgroundColor: 'transparent' }]}
     >
       <DiffRect inner={inner} outer={outer} color="rgba(0, 0, 0, 0.7)" />
       
@@ -152,7 +149,7 @@ export const Overlay = ({ onQrDetected = false }: OverlayProps) => {
           <Paint style="stroke" strokeWidth={cornerWidth} color="#00ff00" opacity={opacity} />
         </Path>
 
-        {/* Scanning Line */}
+        {/* Scanning Line */} 
         {!onQrDetected && (
           <Path
             path={Skia.Path.Make()
@@ -164,7 +161,6 @@ export const Overlay = ({ onQrDetected = false }: OverlayProps) => {
           </Path>
         )}
 
-        {/* Success Scan Line */}
         {onQrDetected && (
           <Path
             path={Skia.Path.Make()

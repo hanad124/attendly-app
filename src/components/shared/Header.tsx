@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import {useRouter} from 'expo-router'
 import { ChevronLeft } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -16,6 +17,8 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const navigation = useNavigation();
 
+  const router = useRouter();
+
   const handleGoBack = () => {
     if (onGoBack) {
       onGoBack();
@@ -26,6 +29,8 @@ export const Header: React.FC<HeaderProps> = ({
       if (navigation.canGoBack()) {
         navigation.goBack();
       } else {
+        
+        router.push('/(tabs)');
         console.warn('Cannot go back: No previous screen in the navigation stack');
       }
     } catch (error) {

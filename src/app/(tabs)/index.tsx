@@ -26,24 +26,6 @@ export default function HomeScreen() {
           <DashboardHeader />
           <QuickMenu />
           <DashboardBanner />
-
-          <Pressable onPress={requestPermission}>
-          <Text className="text-primary text-sm font-medium">Request Permissions</Text>
-        </Pressable>
-
-        <Link href={"/scan"} asChild>
-          <Pressable disabled={!isPermissionGranted}>
-            <Text
-            className="bg-primary p-3 rounded-lg text-white text-sm font-medium"
-              style={[
-                { opacity: !isPermissionGranted ? 0.5 : 1 },
-              ]}
-            >
-              Scan Code
-            </Text>
-          </Pressable>
-        </Link>
-
           <LeaderBoard />
         </View>
       </ScrollView>

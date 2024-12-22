@@ -1,1 +1,1 @@
-export { useBottomSheetStore } from './bottomSheet';
+export { useBottomSheet } from './bottomSheet';
