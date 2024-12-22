@@ -8,7 +8,6 @@ import * as yup from 'yup'
 import Toast from 'react-native-toast-message'
 import { ActivityIndicator } from 'react-native'
 
-// Form validation schema
 const loginSchema = yup.object({
   username: yup
     .string()
@@ -25,12 +24,13 @@ export default function LoginScreen() {
   const [showPassword, setShowPassword] = useState(false)
   const [usernameFocused, setUsernameFocused] = useState(false)
   const [passwordFocused, setPasswordFocused] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const { login, isAuthenticated } = useAuthStore()
 
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm<LoginFormData>({
     resolver: yupResolver(loginSchema),
     defaultValues: {
@@ -39,7 +39,6 @@ export default function LoginScreen() {
     },
   })
 
-  // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
       router.replace('/(tabs)')
@@ -47,30 +46,42 @@ export default function LoginScreen() {
   }, [isAuthenticated])
 
   const onSubmit = async (data: LoginFormData) => {
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
     try {
-      const success = await login(data.username, data.password)
-      if (success) {
+      const res = await login(data.username, data.password);
+
+      console.log({
+        res
+      })
+      if (res) {
         Toast.show({
           type: 'success',
-          text1: 'Welcome back!',
+          text1: 'Success',
           text2: 'Successfully logged in',
-        })
-        router.replace('/(tabs)')
+          position: 'top',
+        });
+        router.replace('/(tabs)');
       } else {
         Toast.show({
           type: 'error',
-          text1: 'Login Failed',
+          text1: 'Error',
           text2: 'Invalid credentials',
-        })
+          position: 'top',
+        });
       }
-    } catch (error) {
+    } catch (error: any) {
       Toast.show({
         type: 'error',
         text1: 'Error',
-        text2: 'An error occurred while logging in',
-      })
+        text2: error?.response?.data?.message || 'An error occurred while logging in',
+        position: 'top',
+      });
+    } finally {
+      setIsSubmitting(false);
     }
-  }
+  };
 
   return (
     <KeyboardAvoidingView 
@@ -103,7 +114,7 @@ export default function LoginScreen() {
               <View>
                 <Text className="text-sm text-gray-600 mb-2">Username</Text>
                 <TextInput
-                  className={`w-full h-12 px-4 rounded-lg bg-white ${
+                  className={`w-full h-14 px-4 rounded-lg bg-white ${
                     errors.username 
                       ? 'border-2 border-red-500' 
                       : usernameFocused
@@ -135,7 +146,7 @@ export default function LoginScreen() {
                 <Text className="text-sm text-gray-600 mb-2">Password</Text>
                 <View className="relative">
                   <TextInput
-                    className={`w-full h-12 px-4 rounded-lg bg-white ${
+                    className={`w-full h-14 px-4 rounded-lg bg-white ${
                       errors.password 
                         ? 'border-2 border-red-500'
                         : passwordFocused
@@ -155,6 +166,7 @@ export default function LoginScreen() {
                     className="absolute right-4 top-3.5"
                     onPress={() => setShowPassword(!showPassword)}
                   >
+
                     <Text className="text-gray-400 font-medium">{showPassword ? 'Hide' : 'Show'}</Text>
                   </TouchableOpacity>
                 </View>
@@ -175,7 +187,7 @@ export default function LoginScreen() {
             {isSubmitting ? (
               <>
                 <ActivityIndicator color="white" className="mr-2" />
-                <Text className="text-white font-semibold">Signing in...</Text>
+                <Text className="text-white font-semibold">Logging in...</Text>
               </>
             ) : (
               <Text className="text-white font-semibold">Login</Text>

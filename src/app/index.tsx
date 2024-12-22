@@ -3,11 +3,11 @@ import { Redirect } from 'expo-router';
 import { useEffect } from 'react';
 
 export default function Index() {
-  const { isAuthenticated, initialize } = useAuthStore();
+  const { isAuthenticated, checkAuth } = useAuthStore();
 
   // Make sure auth is initialized
   useEffect(() => {
-    initialize();
+    checkAuth();
   }, []);
 
   return isAuthenticated ? (

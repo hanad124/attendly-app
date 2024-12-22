@@ -17,6 +17,7 @@
     "@react-navigation/native": "^7.0.0",
     "@shopify/react-native-skia": "^1.7.6",
     "@shopify/restyle": "^2.4.4",
+    "axios": "^1.7.9",
     "expo": "~52.0.20",
     "expo-barcode-scanner": "^13.0.1",
     "expo-blur": "~14.0.1",
