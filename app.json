@@ -14,7 +14,8 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.faaruuq.attendly"
+      "bundleIdentifier": "com.faaruuq.attendly",
+      "icon": "./src/assets/images/splash-logo.png"
     },
     "android": {
       "adaptiveIcon": {
@@ -31,11 +32,14 @@
     "web": {
       "favicon": "./src/assets/images/favicon.png"
     },
-     "plugins": [
+    "plugins": [
+      "expo-router",
       [
-        "expo-router",
+        "expo-camera",
         {
-          "origin": "https://n"
+          "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera",
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "recordAudioAndroid": true
         }
       ]
     ],
