@@ -39,10 +39,8 @@ interface AuthState {
   checkAuth: () => Promise<void>;
 }
 
-// Type for persisted state
 type PersistedState = Pick<AuthState, 'user' | 'isAuthenticated'>;
 
-// Create a custom storage object for SecureStore
 const secureStorage = {
   getItem: async (name: string): Promise<string | null> => {
     return await SecureStore.getItemAsync(name);
@@ -55,7 +53,6 @@ const secureStorage = {
   },
 };
 
-// Create the store with persistence
 export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({

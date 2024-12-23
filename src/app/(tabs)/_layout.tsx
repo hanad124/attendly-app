@@ -59,9 +59,9 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
-          name="(packages)"
+          name="courses"
           options={{
-            tabBarLabel: "Subjects",
+            tabBarLabel: "Courses", 
             tabBarIcon: ({ color }) => (
               <BookText size={20} color={color} strokeWidth={2} />
             ),

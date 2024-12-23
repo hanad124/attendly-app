@@ -5,7 +5,6 @@ import { useEffect } from 'react';
 export default function Index() {
   const { isAuthenticated, checkAuth } = useAuthStore();
 
-  // Make sure auth is initialized
   useEffect(() => {
     checkAuth();
   }, []);

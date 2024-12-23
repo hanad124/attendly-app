@@ -41,20 +41,6 @@ export default function Account() {
             </View>
 
             <View style={styles.infoRow}>
-              <Text style={styles.label}>Role</Text>
-              <Text style={styles.value}>
-                {typeof user.role === 'string' ? user.role : user.role.name}
-              </Text>
-            </View>
-
-            <View style={styles.infoRow}>
-              <Text style={styles.label}>Email Verified</Text>
-              <Text style={[styles.value, { color: user.isEmailVerified ? '#4CAF50' : '#FF9800' }]}>
-                {user.isEmailVerified ? 'Yes' : 'No'}
-              </Text>
-            </View>
-
-            <View style={styles.infoRow}>
               <Text style={styles.label}>Member Since</Text>
               <Text style={styles.value}>
                 {new Date(user.dateCreated).toLocaleDateString()}

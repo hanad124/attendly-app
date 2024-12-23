@@ -2,22 +2,22 @@ import React, { useEffect } from "react";
 import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useAuthStore } from "../stores/auth";
-import Toast from 'react-native-toast-message';
+import Toast from "react-native-toast-message";
+import { StyleSheet } from "react-native";
 
-// import global css
 import "../global.css";
 import BottomSheet from "@/components/BottomSheet";
 
 export default function RootLayout() {
   const { isAuthenticated, initialized, initialize } = useAuthStore();
 
-  // Initialize auth state when app starts
   useEffect(() => {
     initialize();
   }, []);
 
-  // Don't render anything until we've initialized auth
   if (!initialized) {
+    console.log("isAuthenticated:", isAuthenticated);
+    console.log("Initializing auth state...");
     return null;
   }
 
@@ -49,3 +49,20 @@ export default function RootLayout() {
     </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  content: {
+    alignItems: "center",
+  },
+  text: {
+    color: "#ffffff",
+    marginTop: 20,
+    fontSize: 18,
+    fontWeight: "600",
+  },
+});
