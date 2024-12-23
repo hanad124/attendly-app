@@ -1,43 +1,46 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import * as SecureStore from 'expo-secure-store';
+import { authService } from '@/services/auth';
+
+interface Ability {
+  action: string;
+  subject: string;
+}
+
+interface Role {
+  _id: string;
+  name: string;
+  ability: Ability[];
+  createdBy: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 interface User {
-  id: string;
+  email: string;
+  role: string | Role;
+  // isEmailVerified: boolean;
   username: string;
-  name: string;
-  studentId: string;
+  status: string;
+  dateCreated: string;
+  lastLogin: string;
+  id: string;
 }
 
 interface AuthState {
-  user: User | null;
+  user: User | null | any;
   isAuthenticated: boolean;
   initialized: boolean;
   login: (username: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
   initialize: () => Promise<void>;
+  checkAuth: () => Promise<void>;
 }
 
 // Type for persisted state
 type PersistedState = Pick<AuthState, 'user' | 'isAuthenticated'>;
-
-// Mock student data
-const MOCK_USERS = [
-  {
-    id: '1',
-    username: 'student1',
-    password: 'password123', // In real app, this would be hashed
-    name: 'John Doe',
-    studentId: 'STD001'
-  },
-  {
-    id: '2',
-    username: 'student2',
-    password: 'password123',
-    name: 'Jane Smith',
-    studentId: 'STD002'
-  }
-];
 
 // Create a custom storage object for SecureStore
 const secureStorage = {
@@ -55,20 +58,29 @@ const secureStorage = {
 // Create the store with persistence
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       isAuthenticated: false,
       initialized: false,
 
+      checkAuth: async () => {
+        try {
+          const user = await authService.getCurrentUser();
+          if (user) {
+            set({ user, isAuthenticated: true });
+          } else {
+            set({ user: null, isAuthenticated: false });
+          }
+        } catch (error) {
+          console.error('Check auth error:', error);
+          set({ user: null, isAuthenticated: false });
+        }
+      },
+
       initialize: async () => {
         try {
-          const storedAuth = await SecureStore.getItemAsync('auth_store');
-          if (storedAuth) {
-            const { state } = JSON.parse(storedAuth);
-            set({ ...state, initialized: true });
-          } else {
-            set({ initialized: true });
-          }
+          await get().checkAuth();
+          set({ initialized: true });
         } catch (error) {
           console.error('Failed to initialize auth state:', error);
           set({ initialized: true });
@@ -77,12 +89,10 @@ export const useAuthStore = create<AuthState>()(
 
       login: async (username: string, password: string) => {
         try {
-          const user = MOCK_USERS.find(u => u.username === username && u.password === password);
-          
-          if (user) {
-            const { password: _, ...userWithoutPassword } = user;
+          const response = await authService.login({ username, password });
+          if (response.user) {
             set({ 
-              user: userWithoutPassword, 
+              user: response.user,
               isAuthenticated: true,
               initialized: true 
             });
@@ -97,6 +107,7 @@ export const useAuthStore = create<AuthState>()(
 
       logout: async () => {
         try {
+          await authService.logout();
           set({ 
             user: null, 
             isAuthenticated: false,

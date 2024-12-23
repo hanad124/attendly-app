@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import { Header } from '@/components/shared/Header'
 import { useAuthStore } from '@/stores/auth'
 import { router } from 'expo-router'
+import { MaterialIcons } from '@expo/vector-icons'
 
 export default function Account() {
   const user = useAuthStore((state) => state.user)
@@ -20,18 +21,53 @@ export default function Account() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Account" showBackButton={false} />
+      <Header title="Account" showBackButton={true} />
       <View style={styles.content}>
         <View style={styles.userInfo}>
-          <Text style={styles.name}>{user.name}</Text>
-          <Text style={styles.studentId}>Student ID: {user.studentId}</Text>
-          <Text style={styles.username}>Username: {user.username}</Text>
+          <View style={styles.userHeader}>
+            <MaterialIcons name="account-circle" size={60} color="#333" />
+            <View style={styles.headerText}>
+              <Text style={styles.username}>{user.username}</Text>
+              <Text style={styles.email}>{user.email}</Text>
+            </View>
+          </View>
+
+          <View style={styles.infoSection}>
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Status</Text>
+              <Text style={[styles.value, { color: user.status === 'active' ? '#4CAF50' : '#FF9800' }]}>
+                {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
+              </Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Role</Text>
+              <Text style={styles.value}>
+                {typeof user.role === 'string' ? user.role : user.role.name}
+              </Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Email Verified</Text>
+              <Text style={[styles.value, { color: user.isEmailVerified ? '#4CAF50' : '#FF9800' }]}>
+                {user.isEmailVerified ? 'Yes' : 'No'}
+              </Text>
+            </View>
+
+            <View style={styles.infoRow}>
+              <Text style={styles.label}>Member Since</Text>
+              <Text style={styles.value}>
+                {new Date(user.dateCreated).toLocaleDateString()}
+              </Text>
+            </View>
+          </View>
         </View>
 
         <TouchableOpacity 
           style={styles.logoutButton}
           onPress={handleLogout}
         >
+          <MaterialIcons name="logout" size={20} color="white" style={styles.logoutIcon} />
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </View>
@@ -49,32 +85,77 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   userInfo: {
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f8f9fa',
+    borderRadius: 15,
     padding: 20,
-    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  userHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 20,
+    paddingBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
   },
-  name: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#333',
-  },
-  studentId: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 5,
+  headerText: {
+    marginLeft: 15,
+    flex: 1,
   },
   username: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 4,
+  },
+  email: {
+    fontSize: 14,
+    color: '#666',
+  },
+  infoSection: {
+    gap: 15,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  label: {
     fontSize: 16,
     color: '#666',
+    fontWeight: '500',
+  },
+  value: {
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '600',
   },
   logoutButton: {
     backgroundColor: '#ff3b30',
     padding: 15,
-    borderRadius: 8,
+    borderRadius: 12,
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 16,
+    justifyContent: 'center',
+    marginTop: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  logoutIcon: {
+    marginRight: 8,
   },
   logoutText: {
     color: 'white',

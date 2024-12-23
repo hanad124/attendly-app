@@ -58,7 +58,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       await useAuthStore.getState().checkAuth();
       set({ initialized: true });
     } catch (error) {
-      set({ initialized: true }); // Set initialized even if auth check fails
+      set({ initialized: true }); 
     }
   },
 }));
