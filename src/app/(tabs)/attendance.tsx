@@ -3,12 +3,12 @@ import React from "react";
 import { Link } from "expo-router";
 import { Header } from "@/components/shared/Header";
 
-export default function LeaderBoard() {
+export default function Attendance() {
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Leader Board" showBackButton={true} />
+      <Header title="Attendance" showBackButton={true} />
       <View style={styles.header}>
-        <Text style={styles.title}>Leader Board</Text>
+        <Text style={styles.title}>Attendance</Text>
 
         <Link href="/testPage">Go to Test Page</Link>
       </View>

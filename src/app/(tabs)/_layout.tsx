@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Home, User, ScanLine, BookText, Award } from "lucide-react-native";
+import { Home, User, ScanLine, BookOpenText, Trophy, ListCheck, ListTodo } from "lucide-react-native";
 import { useBottomSheet } from "@/stores/bottomSheet";
 import { useLoadingModal } from "@/stores/loadingModal";
 
@@ -11,20 +11,9 @@ export default function TabsLayout() {
     <>
       <Tabs
         screenOptions={{
-          // headerLeft: () => (
-          //     <TouchableOpacity
-          //       onPress={() => navigation.openDrawer()}
-          //       style={{ marginLeft: 16 }}
-          //     >
-          //       <Menu size={20} color="black" />
-          //     </TouchableOpacity>
-          //   ),
           headerShown: false,
           tabBarStyle: {
             position: "absolute",
-            // bottom: 14,
-            // marginHorizontal: 16,
-            // borderRadius: 24,
             height: 90,
             backgroundColor: "rgba(255, 255, 255, 1)",
 
@@ -63,7 +52,7 @@ export default function TabsLayout() {
           options={{
             tabBarLabel: "Courses", 
             tabBarIcon: ({ color }) => (
-              <BookText size={20} color={color} strokeWidth={2} />
+              <BookOpenText size={20} color={color} strokeWidth={2} />
             ),
           }}
         />
@@ -108,11 +97,11 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
-          name="leader-board"
+          name="attendance"
           options={{
-            tabBarLabel: "Board",
+            tabBarLabel: "Attendance",
             tabBarIcon: ({ color }) => (
-              <Award size={20} color={color} strokeWidth={2} />
+              <ListTodo size={24} color={color} strokeWidth={2} />
             ),
           }}
         />

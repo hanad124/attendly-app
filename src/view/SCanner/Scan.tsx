@@ -67,14 +67,12 @@ export default function Scan() {
       appState.current = nextAppState;
     });
 
-    // Initialize location service with actual coordinates
     LocationService.setLocationConfig({
-      targetLatitude: 2.033500,   // 2°02'00.6"N
-      targetLongitude: 45.319611, // 45°19'10.6"E
-      allowedRadius: 5, // 5 meters radius
+      targetLatitude: 2.033500,   
+      targetLongitude: 45.319611, 
+      allowedRadius: 6, 
     });
 
-    // Initial location check
     checkLocationServices();
 
     return () => {
@@ -85,7 +83,6 @@ export default function Scan() {
   const handleBarCodeScanned = async ({ data }: { data: string }) => {
     if (data && !qrLock.current) {
       try {
-        // Set lock immediately to prevent multiple scans
         qrLock.current = true;
 
         const locationServicesEnabled = await checkLocationServices();
@@ -111,11 +108,9 @@ export default function Scan() {
         
         console.log('QR Code detected:', data);
         
-        // Navigate only once and wait for animation
         await new Promise(resolve => setTimeout(resolve, 500));
         router.push(`/purchaseSuccess`);
         
-        // Reset after a longer delay to prevent multiple scans
         setTimeout(() => {
           setQrDetected(false);
           qrLock.current = false;
