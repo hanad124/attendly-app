@@ -2,15 +2,16 @@ import { View, Text, StyleSheet, Button } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Header } from '@/components/shared/Header'
+import ScheduleBanner from '@/view/Schedule/ScheduleBanner'
+import Periods from '@/view/Schedule/periods'
 
-export default function Courses() {
+export default function Schedule() {
     
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Courses" showBackButton={true} />
-      <View style={styles.header}>
-        <Text style={styles.title}>Courses</Text>
-      </View>
+      <Header title="Schedule" showBackButton={true} />
+        <ScheduleBanner />
+        <Periods />
     </SafeAreaView>
   )
 }

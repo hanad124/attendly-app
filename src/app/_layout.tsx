@@ -61,19 +61,4 @@ export default function RootLayout() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  content: {
-    alignItems: 'center',
-  },
-  text: {
-    color: '#ffffff',
-    marginTop: 20,
-    fontSize: 18,
-    fontWeight: '600',
-  },
-});
+

@@ -29,6 +29,8 @@ interface Tokens {
 export interface User {
   email: string;
   role: Role;
+  lastName: string;
+  firstName: string;
   isEmailVerified: boolean;
   username: string;
   status: string;

@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Home, User, ScanLine, BookOpenText, Trophy, ListCheck, ListTodo } from "lucide-react-native";
+import { Home, User, ScanLine, BookOpenText, CalendarDays, ListTodo } from "lucide-react-native";
 import { useBottomSheet } from "@/stores/bottomSheet";
 import { useLoadingModal } from "@/stores/loadingModal";
 
@@ -48,11 +48,11 @@ export default function TabsLayout() {
           }}
         />
         <Tabs.Screen
-          name="courses"
+          name="schedule"
           options={{
-            tabBarLabel: "Courses", 
+            tabBarLabel: "Schedule", 
             tabBarIcon: ({ color }) => (
-              <BookOpenText size={20} color={color} strokeWidth={2} />
+              <CalendarDays size={20} color={color} strokeWidth={2} />
             ),
           }}
         />

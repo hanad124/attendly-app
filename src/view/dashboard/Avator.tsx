@@ -6,8 +6,12 @@ import { useRouter } from "expo-router";
 import { Bell, Copy } from "lucide-react-native";
 
 import avatorImage from "@/assets/images/avator-img.jpg";
+import { useAuthStore } from "@/stores/auth";
 
 export default function Avator() {
+  const user = useAuthStore((state) => state.user)
+
+
   const router = useRouter();
   return (
     <View className={` flex flex-row items-center `}>
@@ -25,10 +29,10 @@ export default function Avator() {
 
             <View className={`flex flex-col `}>
               <Text className={`text-xl font-semibold text-gray-800`}>
-                Hanad Mohamed
+                {user?.firstName} {user?.lastName}
               </Text>
               <View className="flex flex-row items-center gap-2">
-                <Text className={`  text-gray-500`}>C120057</Text>
+                <Text className={`  text-gray-500`}>{user?.username}</Text>
                 <Copy size={13} color="#6b7280" strokeWidth={1.5} />
               </View>
             </View>
