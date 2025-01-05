@@ -11,8 +11,8 @@ export default function ScheduleBanner() {
   const weekday = currentDate.toLocaleString('default', { weekday: 'long' });
 
   return (
-    <View className="mt-4 px-4">
-      <View className="w-full h-40 rounded-3xl shadow-lg relative overflow-hidden">
+    <View className="mt-4 px-8">
+      <View className="w-full h-40 rounded-xl shadow-lg relative overflow-hidden">
         <Svg width="100%" height="100%" className="absolute inset-0">
           <Defs>
             <Pattern id="smallGrid" width="10" height="10" patternUnits="userSpaceOnUse">
@@ -28,7 +28,6 @@ export default function ScheduleBanner() {
           <Circle cx="10%" cy="20%" r="60" fill="rgba(255,255,255,0.1)" />
           <Circle cx="90%" cy="80%" r="100" fill="rgba(255,255,255,0.07)" />
         </Svg>
-
         <View className="absolute inset-0 p-6">
           <View className="flex-row items-center justify-between h-full">
             <View className="flex-1">

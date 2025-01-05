@@ -57,7 +57,7 @@ export interface ApiError {
 export const authService = {
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     try {
-      const response = await axiosInstance.post<LoginResponse>("/auth/login-with-username", credentials);
+      const response = await axiosInstance.post<LoginResponse>("/auth/student-login", credentials);
 
       console.log("Log in response:", response.data);
       

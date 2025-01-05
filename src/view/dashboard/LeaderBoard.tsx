@@ -41,12 +41,11 @@ import score3image from "@/assets/images/leader-board/score-3.png";
 export default function LeaderBoard() {
   return (
     <View className="mt-10 mb-32">
-      <View className="flex flex-row items-center justify-between">
-
-      <Text className="text-lg font-semibold text-gray-800 mb-4 text-left">
-        Leader Board
+      <View className="flex flex-row items-center justify-between mb-4 ">
+      <Text className="text-lg font-medium text-gray-800text-left">
+        Attendence Leader Board
       </Text>
-      <Text className="text-primary text-sm font-medium">Weekly</Text>
+      <Text className="text-primary text-sm font-medium">view all</Text>
       </View>
 
       <View className="">

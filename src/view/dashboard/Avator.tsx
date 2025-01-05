@@ -1,5 +1,5 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import React from "react";
+import { View, Text, Image, TouchableOpacity, ActivityIndicator } from "react-native";
+import React, { useEffect } from "react";
 
 import { useRouter } from "expo-router";
 
@@ -8,8 +8,11 @@ import { Bell, Copy } from "lucide-react-native";
 import avatorImage from "@/assets/images/avator-img.jpg";
 import { useAuthStore } from "@/stores/auth";
 
+
 export default function Avator() {
   const user = useAuthStore((state) => state.user)
+
+ 
 
 
   const router = useRouter();
