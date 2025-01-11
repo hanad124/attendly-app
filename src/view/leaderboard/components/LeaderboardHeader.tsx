@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  Modal,
+  Pressable,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -87,6 +89,18 @@ const BackgroundPattern = () => (
 
 const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({ topThree }) => {
   const router = useRouter();
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [selectedFilter, setSelectedFilter] = useState('My Class');
+
+  const dropdownOptions = {
+    filter: ['My Class', 'Semester', 'Department']
+  };
+
+  const handleSelect = (option: string) => {
+    setSelectedFilter(option);
+    setActiveDropdown(null);
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -94,25 +108,70 @@ const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({ topThree }) => {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradient}
-      >
-        <BackgroundPattern />
-        <TouchableOpacity
-          onPress={() => router.back()}
-          className="flex flex-row items-center gap-2 mt-5 ml-5"
-        >
-          <ChevronLeft size={24} color="#ffffff" />
-          <Text className="text-white text-lg">Leaderboard</Text>
-        </TouchableOpacity>
+      > 
+       <BackgroundPattern />
+        <View className="flex flex-row items-center justify-between">
+          <TouchableOpacity
+            onPress={() => router.back()}
+            className="flex flex-row items-center gap-2 mt-16 ml-5"
+          >
+            <ChevronLeft size={24} color="#ffffff" />
+            <Text className="text-white text-lg">Leaderboard</Text>
+          </TouchableOpacity>
+
+          {/* modern filtering section */}
+          <TouchableOpacity 
+            className="flex flex-row items-center gap-1 bg-white/10 px-3 py-1.5 rounded-full mt-16 mr-5"
+            onPress={() => setActiveDropdown(activeDropdown === 'filter' ? null : 'filter')}
+          >
+            <Text className="text-white text-sm">{selectedFilter}</Text>
+            <ChevronDown size={16} color="#ffffff" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Dropdown Modal */}
+        {activeDropdown && (
+          <Pressable 
+            style={[styles.modalOverlay, { zIndex: 1000 }]}
+            onPress={() => setActiveDropdown(null)}
+          >
+            <View 
+              style={[
+                styles.dropdownContainer, 
+                { 
+                  position: 'absolute', 
+                  top: 80, 
+                  right: 20,
+                  zIndex: 1001 
+                }
+              ]}
+            >
+              {dropdownOptions[activeDropdown].map((option, index) => (
+                <TouchableOpacity
+                  key={option}
+                  style={[
+                    styles.dropdownItem,
+                    index !== dropdownOptions[activeDropdown].length - 1 && styles.dropdownItemBorder,
+                    selectedFilter === option && styles.selectedItem
+                  ]}
+                  onPress={() => handleSelect(option)}
+                >
+                  <Text style={[
+                    styles.dropdownText,
+                    selectedFilter === option && styles.selectedText
+                  ]}>{option}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </Pressable>
+        )}
+
+      
         <View style={styles.content}>
-          <View style={styles.topBar}>
-            {/* <View style={styles.leftSection}>
-              <Text style={styles.title}>Top 50</Text>
-              <ChevronDown size={20} color="#ffffff" style={styles.chevron} />
-            </View> */}
-            {/* <View style={styles.rightSection}>
-              <Settings2 size={20} color="#ffffff" style={styles.icon} />
-              <MoreHorizontal size={20} color="#ffffff" />
-            </View> */}
+          <View className="flex flex-row items-center justify-center mb-10 mt-5">
+            <Text className="text-white text-2xl">👑 {
+              selectedFilter
+              } Leaderboard 👑</Text>
           </View>
           <TopThreeLeaderboard users={topThree} />
         </View>
@@ -183,6 +242,49 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     marginRight: 8,
     fontSize: 14,
+  },
+  modalOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    zIndex: 1000,
+  },
+  dropdownContainer: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    overflow: 'hidden',
+    width: 200,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    zIndex: 1001,
+  },
+  dropdownItem: {
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+  },
+  dropdownItemBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
+  dropdownText: {
+    fontSize: 15,
+    color: '#374151',
+  },
+  selectedItem: {
+    backgroundColor: '#f3f4f6',
+  },
+  selectedText: {
+    color: '#1F5FD9',
+    fontWeight: '500',
   },
 });
 
