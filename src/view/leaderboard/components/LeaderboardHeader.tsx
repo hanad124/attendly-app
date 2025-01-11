@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Modal,
   Pressable,
+  Image,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
@@ -16,6 +17,9 @@ import { ChevronDown, ChevronLeft } from "lucide-react-native";
 import TopThreeLeaderboard from "./TopThreeLeaderboard";
 import { LeaderboardEntry } from "../types";
 import { Header } from "@/components/shared/Header";
+
+import confettiLeft from "@/assets/images/leader-board/confetti-left.png";
+import confettiRight from "@/assets/images/leader-board/confetti-right.png";
 
 const PRIMARY_COLOR = "#1F5FD9";
 
@@ -90,10 +94,10 @@ const BackgroundPattern = () => (
 const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({ topThree }) => {
   const router = useRouter();
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-  const [selectedFilter, setSelectedFilter] = useState('My Class');
+  const [selectedFilter, setSelectedFilter] = useState("My Class");
 
   const dropdownOptions = {
-    filter: ['My Class', 'Semester', 'Department']
+    filter: ["My Class", "Semester", "Department"],
   };
 
   const handleSelect = (option: string) => {
@@ -108,42 +112,60 @@ const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({ topThree }) => {
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradient}
-      > 
-       <BackgroundPattern />
-        <View className="flex flex-row items-center justify-between">
+      >
+        <View className="flex flex-row items-center justify-between  mt-8 mx-2 " style={{ zIndex: 2 }}>
           <TouchableOpacity
             onPress={() => router.back()}
-            className="flex flex-row items-center gap-2 mt-16 ml-5"
+            className="flex flex-row items-center gap-2ml-5"
           >
             <ChevronLeft size={24} color="#ffffff" />
             <Text className="text-white text-lg">Leaderboard</Text>
           </TouchableOpacity>
 
           {/* modern filtering section */}
-          <TouchableOpacity 
-            className="flex flex-row items-center gap-1 bg-white/10 px-3 py-1.5 rounded-full mt-16 mr-5"
-            onPress={() => setActiveDropdown(activeDropdown === 'filter' ? null : 'filter')}
+          <TouchableOpacity
+            className="flex flex-row items-center gap-1 bg-white/10 px-3 py-1.5 rounded-full mr-5"
+            onPress={() =>
+              setActiveDropdown(activeDropdown === "filter" ? null : "filter")
+            }
           >
             <Text className="text-white text-sm">{selectedFilter}</Text>
             <ChevronDown size={16} color="#ffffff" />
           </TouchableOpacity>
         </View>
-
+        <BackgroundPattern />
+        {/* Confetti Images */}
+        <View style={[styles.confettiContainer, { zIndex: 0 }]}>
+          <Image
+            style={[
+              styles.confettiLeft,
+              { width: width * 0.4, height: width * 0.4 },
+            ]}
+            source={confettiLeft}
+          />
+          <Image
+            style={[
+              styles.confettiRight,
+              { width: width * 0.4, height: width * 0.4 },
+            ]}
+            source={confettiRight}
+          />
+        </View>
         {/* Dropdown Modal */}
         {activeDropdown && (
-          <Pressable 
-            style={[styles.modalOverlay, { zIndex: 1000 }]}
+          <Pressable
+            style={[styles.modalOverlay, { zIndex: 3 }]}
             onPress={() => setActiveDropdown(null)}
           >
-            <View 
+            <View
               style={[
-                styles.dropdownContainer, 
-                { 
-                  position: 'absolute', 
-                  top: 80, 
+                styles.dropdownContainer,
+                {
+                  position: "absolute",
+                  top: 80,
                   right: 20,
-                  zIndex: 1001 
-                }
+                  zIndex: 4,
+                },
               ]}
             >
               {dropdownOptions[activeDropdown].map((option, index) => (
@@ -151,27 +173,30 @@ const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({ topThree }) => {
                   key={option}
                   style={[
                     styles.dropdownItem,
-                    index !== dropdownOptions[activeDropdown].length - 1 && styles.dropdownItemBorder,
-                    selectedFilter === option && styles.selectedItem
+                    index !== dropdownOptions[activeDropdown].length - 1 &&
+                      styles.dropdownItemBorder,
+                    selectedFilter === option && styles.selectedItem,
                   ]}
                   onPress={() => handleSelect(option)}
                 >
-                  <Text style={[
-                    styles.dropdownText,
-                    selectedFilter === option && styles.selectedText
-                  ]}>{option}</Text>
+                  <Text
+                    style={[
+                      styles.dropdownText,
+                      selectedFilter === option && styles.selectedText,
+                    ]}
+                  >
+                    {option}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </View>
           </Pressable>
         )}
-
-      
         <View style={styles.content}>
-          <View className="flex flex-row items-center justify-center mb-10 mt-5">
-            <Text className="text-white text-2xl">👑 {
-              selectedFilter
-              } Leaderboard 👑</Text>
+          <View className="flex flex-row items-center justify-center mb-5 mt-10">
+            <Text className="text-white text-xl">
+              👑 {selectedFilter} Leaderboard 👑
+            </Text>
           </View>
           <TopThreeLeaderboard users={topThree} />
         </View>
@@ -186,21 +211,21 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   gradient: {
-    paddingTop: 10,
+    paddingTop: 0,
     paddingHorizontal: 0,
-    paddingBottom: 20,
+    paddingBottom: 10,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
   },
   content: {
     zIndex: 1,
-    padding: 20,
+    paddingHorizontal: 20,
   },
   topBar: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 20,
+    marginBottom: 0,
   },
   leftSection: {
     flexDirection: "row",
@@ -244,18 +269,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   modalOverlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: "rgba(0,0,0,0.3)",
     zIndex: 1000,
   },
   dropdownContainer: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 12,
-    overflow: 'hidden',
+    overflow: "hidden",
     width: 200,
     shadowColor: "#000",
     shadowOffset: {
@@ -273,18 +298,36 @@ const styles = StyleSheet.create({
   },
   dropdownItemBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: "#e5e7eb",
   },
   dropdownText: {
     fontSize: 15,
-    color: '#374151',
+    color: "#374151",
   },
   selectedItem: {
-    backgroundColor: '#f3f4f6',
+    backgroundColor: "#f3f4f6",
   },
   selectedText: {
-    color: '#1F5FD9',
-    fontWeight: '500',
+    color: "#1F5FD9",
+    fontWeight: "500",
+  },
+  confettiContainer: {
+    position: "absolute",
+    width: width,
+    height: "100%",
+    zIndex: -1,
+  },
+  confettiLeft: {
+    position: "absolute",
+    left: -20,
+    top: 40,
+    opacity: 0.8,
+  },
+  confettiRight: {
+    position: "absolute",
+    right: -20,
+    top: 40,
+    opacity: 0.8,
   },
 });
 

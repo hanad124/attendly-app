@@ -1,18 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   FlatList,
   StyleSheet,
-  Dimensions,
   Image,
+  TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import LeaderboardHeader from "./components/LeaderboardHeader";
 import { LeaderboardEntry } from "./types";
-import { ChevronRight } from "lucide-react-native";
+import { useGetLeaderboardQuery } from "@/stores/RTK/leaderboard";
+import Animated, { FadeIn, Layout } from "react-native-reanimated";
 
 const PRIMARY_COLOR = "#1F5FD9";
-const { width } = Dimensions.get("window");
 
 const getInitials = (name: string) => {
   return name
@@ -22,6 +23,27 @@ const getInitials = (name: string) => {
     .toUpperCase()
     .slice(0, 2);
 };
+
+// Loading skeleton for list items
+const LeaderboardItemSkeleton = () => (
+  <Animated.View 
+    entering={FadeIn}
+    style={[styles.itemContainer]}
+    className="p-4 flex flex-row items-center justify-between"
+  >
+    <View style={styles.rankContainer}>
+      <View className="w-5 h-4 bg-gray-200 rounded animate-pulse" />
+    </View>
+    <View style={[styles.avatarContainer]} className="bg-gray-200 animate-pulse" />
+    <View style={styles.userInfo}>
+      <View className="w-24 h-4 bg-gray-200 rounded animate-pulse mb-2" />
+      <View className="w-16 h-3 bg-gray-200 rounded animate-pulse" />
+    </View>
+    <View style={styles.expContainer}>
+      <View className="w-16 h-6 bg-gray-200 rounded animate-pulse" />
+    </View>
+  </Animated.View>
+);
 
 const LeaderboardItem = ({
   item,
@@ -33,22 +55,19 @@ const LeaderboardItem = ({
   const initials = getInitials(item.name);
 
   return (
-    <View
-      style={[
-        styles.itemContainer,
-        
-        // item.isCurrentUser && styles.currentUserContainer,
-      ]}
-      className={`${
-        !isLast ? "border-b border-gray-200" : ""
-      } p-4 flex flex-row items-center justify-between ${
-        item.isCurrentUser && "bg-primary/20 border border-primary rounded-b-lg"}`}
+    <Animated.View
+      entering={FadeIn}
+      layout={Layout}
+      style={[styles.itemContainer]}
+      className={`${!isLast ? "" : ""} p-4 flex flex-row items-center justify-between ${
+        item.isCurrentUser && "bg-primary/20 border border-primary rounded-b-lg"
+      }`}
     >
       <View style={styles.rankContainer}>
         <Text
           style={[styles.rank]}
           className={`${item.isCurrentUser ? "text-primary" : "text-white"}`}
-          >
+        >
           {item.rank}.
         </Text>
       </View>
@@ -62,14 +81,7 @@ const LeaderboardItem = ({
         {item.avatar ? (
           <Image source={{ uri: item.avatar }} style={styles.avatarImage} />
         ) : (
-          <Text
-            style={[
-              styles.avatarText,
-            ,
-            ]}
-          >
-            {initials}
-          </Text>
+          <Text style={[styles.avatarText]}>{initials}</Text>
         )}
       </View>
 
@@ -79,145 +91,151 @@ const LeaderboardItem = ({
             style={[styles.name]}
             numberOfLines={1}
             className={`${item.isCurrentUser ? "text-primary" : "text-white"}`}
-
           >
             {item.name}
           </Text>
-          {
-            item.isCurrentUser && (
-              <View className="flex flex-row items-center gap-1">
-                <View className="flex flex-row items-center justify-center bg-primary px-4 py-[0.5px] rounded-full border border-primary">
-
+          {item.isCurrentUser && (
+            <View className="flex flex-row items-center gap-1">
+              <View className="flex flex-row items-center justify-center bg-primary px-4 py-[0.5px] rounded-full border border-primary">
                 <Text className="text-sm text-white font-medium">YOU</Text>
-                </View>
               </View>
-            )
-          }
+            </View>
+          )}
         </View>
         <Text
           style={styles.username}
           numberOfLines={1}
-          className={`${item.isCurrentUser ? "text-primary" : "text-white"}`}
-          >
+          className={`${item.isCurrentUser ? "text-primary" : "text-slate-500"}`}
+        >
           @{item.username}
         </Text>
       </View>
 
       <View style={styles.expContainer}>
-        <Text
-          style={[styles.exp]}
-        >
-          {item.exp.toLocaleString()}
-        </Text>
-        <Text
-          style={styles.expLabel}
-          className={`${item.isCurrentUser ? "text-primary" : "text-white"}`}
-          >
-          EXP
-        </Text>
+        <View className="flex flex-row items-center gap-1">
+          <View className="p-1 py-[.8px] bg-green-500 rounded-sm">
+            <Text className="text-white text-sm">XP</Text>
+          </View>
+          <Text className="text-green-500 font-bold text-lg">
+            {item.exp.toLocaleString()}
+          </Text>
+        </View>
       </View>
-    </View>
+    </Animated.View>
   );
 };
 
 const Leaderboard = () => {
-  const topThree: LeaderboardEntry[] = [
-    {
-      id: "1",
-      rank: 1,
-      name: "John Doe",
-      username: "johndoe",
-      exp: 1200,
-      avatar: "https://i.pravatar.cc/150?img=1",
-    },
-    {
-      id: "2",
-      rank: 2,
-      name: "Jane Smith",
-      username: "janesmith",
-      exp: 1100,
-      avatar: "https://i.pravatar.cc/150?img=2",
-    },
-    {
-      id: "3",
-      rank: 3,
-      name: "Mike Johnson",
-      username: "mikej",
-      exp: 1000,
-      avatar: "https://i.pravatar.cc/150?img=3",
-    },
-  ];
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const otherUsers: LeaderboardEntry[] = [
-    {
-      id: "4",
-      rank: 4,
-      name: "Jake Son",
-      username: "jakeson",
-      exp: 777,
-      avatar: "https://i.pravatar.cc/150?img=4",
+  const { data: leaderboardData, isLoading, isFetching } = useGetLeaderboardQuery({
+    params: {
+      limit: 10,
+      page: currentPage,
+      query: { type: "Class" },
+      options: {
+        populate: [
+          {
+            path: "rankings.student_id",
+            model: "User",
+            select: "firstName lastName",
+            strictPopulate: false,
+          },
+        ],
+      },
     },
-    {
-      id: "5",
-      rank: 5,
-      name: "Thomas Smith",
-      username: "thomas",
-      exp: 666,
-      avatar: "https://i.pravatar.cc/150?img=5",
-    },
-    {
-      id: "6",
-      rank: 6,
-      name: "Chloe Brown",
-      username: "chloeb",
-      exp: 501,
-      avatar: "https://i.pravatar.cc/150?img=6",
-    },
-    {
-      id: "7",
-      rank: 7,
-      name: "Sophia Turner",
-      username: "sophiaturner",
-      exp: 482,
-      avatar: "https://i.pravatar.cc/150?img=7",
-    },
-    {
-      id: "8",
-      rank: 8,
-      name: "Ethan Clark",
-      username: "ethanclark",
-      exp: 320,
-      isCurrentUser: true,
-      avatar: "https://i.pravatar.cc/150?img=8",
-    },
-  ];
+  });
+
+  const handleViewMore = () => {
+    if (!isFetching) {
+      setCurrentPage(prev => prev + 1);
+    }
+  };
+
+  const rankings = leaderboardData?.data?.results[1]?.rankings || [];
+  const hasMore = rankings.length >= 10; // Assuming if we got 10 items, there might be more
+
+  // Get top 3 for the header
+  const topThree = rankings.slice(0, 3).map(ranking => ({
+    id: ranking._id,
+    rank: ranking.rank,
+    name: "Student Name",
+    username: `student${ranking.rank}`,
+    exp: ranking.points,
+    avatar: undefined,
+  }));
+
+  // Get users from rank 4 onwards
+  const otherUsers = rankings.slice(3).map(ranking => ({
+    id: ranking._id,
+    rank: ranking.rank,
+    name: "Student Name",
+    username: `student${ranking.rank}`,
+    exp: ranking.points,
+    avatar: undefined,
+    isCurrentUser: false,
+  }));
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <LeaderboardHeader topThree={[]} />
+        <View style={styles.listContainer}>
+          {[1, 2, 3, 4].map((_, index) => (
+            <LeaderboardItemSkeleton key={index} />
+          ))}
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <LeaderboardHeader topThree={topThree} />
-      <View style={styles.listContainer}>
-        <FlatList
-          data={otherUsers}
-          renderItem={({ item, index }) => (
-            <LeaderboardItem
-              item={item}
-              isLast={index === otherUsers.length - 1}
-            />
-          )}
-          keyExtractor={(item) => item.id}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
-        />
-      </View>
-
-      {/* modern view more button */}
-      <View className="flex flex-row items-center justify-center mt-7 ">
-        <View className="flex flex-row gap-2 mt-2 items-center bg-white px-10 py-4 rounded-lg border border-gray-200">
-          <Text className="">
-            View More
-          </Text>
-        </View>
-      </View>
+      <FlatList
+        ListHeaderComponent={() => (
+          <>
+            <LeaderboardHeader topThree={topThree} />
+            <View style={styles.listContainer}>
+              {otherUsers.map((item, index) => (
+                <LeaderboardItem
+                  key={item.id}
+                  item={item}
+                  isLast={index === otherUsers.length - 1}
+                />
+              ))}
+            </View>
+          </>
+        )}
+        ListFooterComponent={() => 
+          hasMore ? (
+            <TouchableOpacity
+              onPress={handleViewMore}
+              disabled={isFetching}
+              className="flex flex-row items-center justify-center mt-7 mb-5"
+            >
+              <Animated.View 
+                entering={FadeIn}
+                className={`flex flex-row gap-2 items-center bg-white px-10 py-4 rounded-lg border border-gray-200 ${
+                  isFetching ? "opacity-50" : ""
+                }`}
+              >
+                {isFetching ? (
+                  <View className="flex flex-row items-center gap-2">
+                    <ActivityIndicator size="small" color={PRIMARY_COLOR} />
+                    <Text className="text-gray-700">Loading...</Text>
+                  </View>
+                ) : (
+                  <Text className="text-gray-700">View More</Text>
+                )}
+              </Animated.View>
+            </TouchableOpacity>
+          ) : null
+        }
+        data={[]} // Empty data since we're using header for content
+        renderItem={() => null}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.listContent}
+      />
     </View>
   );
 };
@@ -225,34 +243,20 @@ const Leaderboard = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F0F4FF',
+    backgroundColor: "#fff",
   },
   listContainer: {
-    // flex: 1,
     backgroundColor: "#fff",
-    // borderTopLeftRadius: 30,
-    // borderTopRightRadius: 30,
-    marginTop: -20,
+    marginTop: 10,
+    paddingHorizontal: 16,
   },
   listContent: {
-    paddingHorizontal: 16,
-    marginTop: 5,
+    flexGrow: 1,
   },
   itemContainer: {
     flexDirection: "row",
     alignItems: "center",
-    // backgroundColor: '#FFFFFF',
-    // marginBottom: 8,
-    padding: 12,
-    // borderRadius: 12,
-    // shadowColor: '#000',
-    // shadowOffset: {
-    //   width: 0,
-    //   height: 1,
-    // },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 2,
-    // elevation: 2,
+    
   },
   currentUserContainer: {
     backgroundColor: PRIMARY_COLOR,
@@ -300,19 +304,9 @@ const styles = StyleSheet.create({
   },
   username: {
     fontSize: 13,
-    // color: '#666666',
   },
   expContainer: {
     alignItems: "flex-end",
-  },
-  exp: {
-    fontSize: 15,
-    fontWeight: "600",
-    color: "#1A1A1A",
-  },
-  expLabel: {
-    fontSize: 11,
-    // color: '#666666',
   },
   currentUserText: {
     color: "#FFFFFF",
