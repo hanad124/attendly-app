@@ -36,18 +36,19 @@ const LeaderboardItem = ({
     <View
       style={[
         styles.itemContainer,
-        item.isCurrentUser && styles.currentUserContainer,
+        
+        // item.isCurrentUser && styles.currentUserContainer,
       ]}
       className={`${
         !isLast ? "border-b border-gray-200" : ""
       } p-4 flex flex-row items-center justify-between ${
-        item.isCurrentUser && "bg-primary rounded-b-lg"}`}
+        item.isCurrentUser && "bg-primary/20 border border-primary rounded-b-lg"}`}
     >
       <View style={styles.rankContainer}>
         <Text
-          style={[styles.rank, item.isCurrentUser && styles.currentUserText]}
-          className={`${item.isCurrentUser && "text-white"}`}
-        >
+          style={[styles.rank]}
+          className={`${item.isCurrentUser ? "text-primary" : "text-white"}`}
+          >
           {item.rank}.
         </Text>
       </View>
@@ -64,7 +65,7 @@ const LeaderboardItem = ({
           <Text
             style={[
               styles.avatarText,
-              item.isCurrentUser && styles.currentUserText,
+            ,
             ]}
           >
             {initials}
@@ -75,17 +76,19 @@ const LeaderboardItem = ({
       <View style={styles.userInfo}>
         <View className="flex flex-row items-center gap-2">
           <Text
-            style={[styles.name, item.isCurrentUser && styles.currentUserText]}
+            style={[styles.name]}
             numberOfLines={1}
+            className={`${item.isCurrentUser ? "text-primary" : "text-white"}`}
+
           >
             {item.name}
           </Text>
           {
             item.isCurrentUser && (
               <View className="flex flex-row items-center gap-1">
-                <View className="flex flex-row items-center justify-center bg-white px-4 py-[0.5px] rounded-full">
+                <View className="flex flex-row items-center justify-center bg-primary px-4 py-[0.5px] rounded-full border border-primary">
 
-                <Text className="text-sm text-primary font-medium">YOU</Text>
+                <Text className="text-sm text-white font-medium">YOU</Text>
                 </View>
               </View>
             )
@@ -94,22 +97,22 @@ const LeaderboardItem = ({
         <Text
           style={styles.username}
           numberOfLines={1}
-          className={`${item.isCurrentUser && "text-white"}`}
-        >
+          className={`${item.isCurrentUser ? "text-primary" : "text-white"}`}
+          >
           @{item.username}
         </Text>
       </View>
 
       <View style={styles.expContainer}>
         <Text
-          style={[styles.exp, item.isCurrentUser && styles.currentUserText]}
+          style={[styles.exp]}
         >
           {item.exp.toLocaleString()}
         </Text>
         <Text
           style={styles.expLabel}
-          className={`${item.isCurrentUser && "text-white"}`}
-        >
+          className={`${item.isCurrentUser ? "text-primary" : "text-white"}`}
+          >
           EXP
         </Text>
       </View>
@@ -233,6 +236,7 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingHorizontal: 16,
+    marginTop: 5,
   },
   itemContainer: {
     flexDirection: "row",
