@@ -1,38 +1,38 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
-import { View, Text, ScrollView, Pressable } from "react-native";
+import { View, Text, ScrollView, Pressable, Animated } from "react-native";
 import { User2, Clock } from "lucide-react-native";
 import { weekDays } from "@/data/scheduleData";
-import { useGetSchedulesQuery } from "@/stores/RTK/apiSlice";
+import { useGetSchedulesQuery } from "@/stores/RTK/periods";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function Schedule() {
   const [activeDay, setActiveDay] = useState(weekDays[0].id);
   const [expandedPeriod, setExpandedPeriod] = useState<number | null>(null);
+  const [shimmerValue] = useState(new Animated.Value(0));
 
-  const { data: schedules, error, isLoading } = useGetSchedulesQuery({
+  const { data: schedules, isLoading } = useGetSchedulesQuery({
     params: {
       limit: 10,
       page: 1,
       populate: [
-        { path: 'class_id' },
-        { path: 'course_id' },
-        { path: 'lecturer_id' },
-        { path: 'semester_id' },
-      ]
-    }
+        { path: "class_id" },
+        { path: "course_id" },
+        { path: "lecturer_id" },
+        { path: "semester_id" },
+      ],
+    },
   });
 
   const getWeekDayId = (day: string) => {
     const dayMap: { [key: string]: number } = {
-      'Saturday': 1,
-      'Sunday': 2,
-      'Monday': 3,
-      'Tuesday': 4,
-      'Wednesday': 5,
-      'Thursday': 6,
-      'Friday': 7
+      Saturday: 1,
+      Sunday: 2,
+      Monday: 3,
+      Tuesday: 4,
+      Wednesday: 5,
+      Thursday: 6,
+      Friday: 7,
     };
-    console.log('Day from API:', day);
-    console.log('Mapped day ID:', dayMap[day] || 1);
     return dayMap[day] || 1;
   };
 
@@ -52,31 +52,36 @@ export default function Schedule() {
 
   const formatScheduleData = useCallback((scheduleData: Schedule[]) => {
     // Group schedules by day
-    const schedulesByDay = scheduleData.reduce<{ [key: string]: Schedule[] }>((acc, schedule) => {
-      const day = schedule.day;
-      if (!acc[day]) {
-        acc[day] = [];
-      }
-      acc[day].push(schedule);
-      return acc;
-    }, {});
+    const schedulesByDay = scheduleData.reduce<{ [key: string]: Schedule[] }>(
+      (acc, schedule) => {
+        const day = schedule.day;
+        if (!acc[day]) {
+          acc[day] = [];
+        }
+        acc[day].push(schedule);
+        return acc;
+      },
+      {}
+    );
 
     // Format each day's schedules with IDs starting from 1
-    const formattedData = Object.entries(schedulesByDay).flatMap(([day, daySchedules]) => {
-      return daySchedules.map((schedule, index) => {
-        const weekDayId = getWeekDayId(schedule.day);
-        return {
-          id: index + 1, // ID starts from 1 for each day
-          weekDay: weekDayId,
-          subject: schedule.course_id.name,
-          professor: `${schedule.lecturer_id.firstName} ${schedule.lecturer_id.lastName}`,
-          startTime: schedule.from,
-          endTime: schedule.to,
-          type: schedule.type,
-          rawData: schedule
-        };
-      });
-    });
+    const formattedData = Object.entries(schedulesByDay).flatMap(
+      ([day, daySchedules]) => {
+        return daySchedules.map((schedule, index) => {
+          const weekDayId = getWeekDayId(schedule.day);
+          return {
+            id: index + 1,
+            weekDay: weekDayId,
+            subject: schedule.course_id.name,
+            professor: `${schedule.lecturer_id.firstName} ${schedule.lecturer_id.lastName}`,
+            startTime: schedule.from,
+            endTime: schedule.to,
+            type: schedule.type,
+            rawData: schedule,
+          };
+        });
+      }
+    );
 
     return formattedData;
   }, []);
@@ -85,14 +90,8 @@ export default function Schedule() {
     if (!schedules?.data?.results) return [];
     const formattedData = formatScheduleData(schedules.data.results);
     const filtered = formattedData.filter((period) => {
-      console.log('Filtering period:', {
-        periodWeekDay: period.weekDay,
-        activeDay,
-        matches: period.weekDay === activeDay
-      });
       return period.weekDay === activeDay;
     });
-    console.log('Filtered periods:', filtered);
     return filtered;
   }, [activeDay, schedules, formatScheduleData]);
 
@@ -107,6 +106,34 @@ export default function Schedule() {
   useEffect(() => {
     expandFirstPeriod();
   }, [activeDay, expandFirstPeriod]);
+
+  useEffect(() => {
+    const startShimmerAnimation = () => {
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(shimmerValue, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(shimmerValue, {
+            toValue: 0,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    };
+
+    if (isLoading) {
+      startShimmerAnimation();
+    }
+  }, [isLoading, shimmerValue]);
+
+  const translateX = shimmerValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-100, 100],
+  });
 
   const handleDayPress = useCallback((dayId: number) => {
     setActiveDay(dayId);
@@ -181,67 +208,120 @@ export default function Schedule() {
         contentContainerStyle={{ paddingVertical: 20 }}
       >
         <View className="relative">
-          {filteredPeriods.length > 0 && (
-            <View className="absolute left-[19px] top-6 bottom-0 w-[1.6px] bg-gray-200/80" />
-          )}
+          {isLoading ? (
+            // Loading Skeleton with Shimmer
+            <>
+              {[1, 2, 3].map((index) => (
+                <View key={index} className="flex-row mb-8 overflow-hidden">
+                  <View className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
+                    <Animated.View
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        transform: [{ translateX }],
+                      }}
+                    >
+                      <LinearGradient
+                        colors={[
+                          "transparent",
+                          "rgba(255,255,255,0.3)",
+                          "transparent",
+                        ]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        style={{ width: "100%", height: "100%" }}
+                      />
+                    </Animated.View>
+                  </View>
+                  <View className="flex-1 ml-4">
+                    <View className="h-20 bg-gray-200 rounded-lg overflow-hidden">
+                      <Animated.View
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          transform: [{ translateX }],
+                        }}
+                      >
+                        <LinearGradient
+                          colors={[
+                            "transparent",
+                            "rgba(255,255,255,0.3)",
+                            "transparent",
+                          ]}
+                          start={{ x: 0, y: 0 }}
+                          end={{ x: 1, y: 0 }}
+                          style={{ width: "100%", height: "100%" }}
+                        />
+                      </Animated.View>
+                    </View>
+                  </View>
+                </View>
+              ))}
+            </>
+          ) : (
+            <>
+              {filteredPeriods.length > 0 && (
+                <View className="absolute left-[19px] top-6 bottom-0 w-[1.6px] bg-gray-200/80" />
+              )}
 
-          {filteredPeriods.length > 0 ? (
-            filteredPeriods.map((period) => (
-              <Pressable
-                key={`${activeDay}-${period.id}`}
-                onPress={() => handlePeriodPress(period.id)}
-                className="flex-row mb-8"
-              >
-                <View
-                  className={`w-10 h-10 rounded-full ${
-                    expandedPeriod === period.id
-                      ? "bg-primary"
-                      : "bg-transparent border border-primary"
-                  } items-center justify-center z-10`}
-                >
-                  <Text
-                    className={`${
-                      expandedPeriod === period.id
-                        ? "text-white"
-                        : "text-primary"
-                    } font-medium`}
+              {filteredPeriods.length > 0 ? (
+                filteredPeriods.map((period) => (
+                  <Pressable
+                    key={`${activeDay}-${period.id}`}
+                    onPress={() => handlePeriodPress(period.id)}
+                    className="flex-row mb-8"
                   >
-                    {period.id}
+                    <View
+                      className={`w-10 h-10 rounded-full ${
+                        expandedPeriod === period.id
+                          ? "bg-primary"
+                          : "bg-transparent border border-primary"
+                      } items-center justify-center z-10`}
+                    >
+                      <Text
+                        className={`${
+                          expandedPeriod === period.id
+                            ? "text-white"
+                            : "text-primary"
+                        } font-medium`}
+                      >
+                        {period.id}
+                      </Text>
+                    </View>
+
+                    <View className="flex-1 ml-4 ">
+                      {expandedPeriod === period.id ? (
+                        renderPeriodDetails(period)
+                      ) : (
+                        <>
+                          <View className="mt-2 ">
+                            <Text className="text-gray-600 font-normal ">
+                              {period.startTime} - {period.endTime}
+                            </Text>
+                          </View>
+                        </>
+                      )}
+                    </View>
+
+                    {expandedPeriod === period.id && (
+                      <Pressable className="w-10 h-10 rounded-full bg-[#00BCD4] items-center justify-center ml-2 mt-10">
+                        <User2 size={20} color="white" />
+                      </Pressable>
+                    )}
+                  </Pressable>
+                ))
+              ) : (
+                <View className="py-10">
+                  <Text className="text-gray-400 text-center">
+                    No classes scheduled for{" "}
+                    {weekDays.find((d) => d.id === activeDay)?.fullName}
                   </Text>
                 </View>
-
-                <View className="flex-1 ml-4 ">
-                  {expandedPeriod === period.id ? (
-                    renderPeriodDetails(period)
-                  ) : (
-                    <>
-                      <View className="mt-2 ">
-                        <Text className="text-gray-600 font-normal ">
-                          {period.startTime} - {period.endTime}
-                        </Text>
-                      </View>
-                    </>
-                  )}
-                </View>
-
-                {expandedPeriod === period.id && (
-                  <Pressable className="w-10 h-10 rounded-full bg-[#00BCD4] items-center justify-center ml-2 mt-10">
-                    <User2 size={20} color="white" />
-                  </Pressable>
-                )}
-              </Pressable>
-            ))
-          ) : (
-            <View className="py-10">
-              <Text className="text-gray-400 text-center">
-                No classes scheduled for{" "}
-                {weekDays.find((d) => d.id === activeDay)?.fullName}
-              </Text>
-            </View>
+              )}
+            </>
           )}
         </View>
       </ScrollView>
-      
     </View>
   );
 }

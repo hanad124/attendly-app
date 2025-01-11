@@ -1,7 +1,7 @@
 import { View, Text, Image } from "react-native";
 import React from "react";
 
-const leaderboardData = [
+const leaderboardData2 = [
   {
     id: 1,
     name: "Hanad Mohamed",
@@ -37,19 +37,51 @@ const leaderboardData = [
 import score1image from "@/assets/images/leader-board/score-1.png";
 import score2image from "@/assets/images/leader-board/score-2.png";
 import score3image from "@/assets/images/leader-board/score-3.png";
+import { useGetLeaderboardQuery } from "@/stores/RTK/leaderboard";
+import { Link } from "expo-router";
 
 export default function LeaderBoard() {
+  const {
+    data: leaderboardData,
+    isLoading,
+    isError,
+    error,
+  } = useGetLeaderboardQuery({
+    params: {
+      limit: 10,
+      page: 1,
+      query: { type: "Class" },
+      options: {
+        populate: [
+          {
+            path: "rankings.student_id",
+            model: "User",
+            select: "firstName lastName",
+            strictPopulate: false
+          }
+        ]
+      }
+    },
+  });
+
+  console.log(
+    "🚀 ~ file: LeaderBoard.tsx:47 ~ leaderboardData:",
+    leaderboardData?.data
+  );
+
   return (
     <View className="mt-10 mb-32">
       <View className="flex flex-row items-center justify-between mb-4 ">
-      <Text className="text-lg font-medium text-gray-800text-left">
-        Attendence Leader Board
-      </Text>
-      <Text className="text-primary text-sm font-medium">view all</Text>
+        <Text className="text-lg font-medium text-gray-800text-left">
+          Attendence Leader Board
+        </Text>
+        <Link href="/leaderboard">
+        <Text className="text-primary text-sm font-medium">view all</Text>
+        </Link>
       </View>
 
       <View className="">
-        {leaderboardData.map((leader) => (
+        {leaderboardData2.map((leader) => (
           <View
             key={leader.id}
             className={`flex-row items-center ${

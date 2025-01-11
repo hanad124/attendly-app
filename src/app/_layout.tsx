@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
+import { View, ActivityIndicator, StatusBar, Image } from "react-native";
 import { Stack } from "expo-router";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useAuthStore } from "../stores/auth";
 import Toast from "react-native-toast-message";
-import { View, ActivityIndicator, StyleSheet, Image } from "react-native";
 
 import { Provider } from "react-redux";
 import { store } from "@/stores/RTK/store";
@@ -41,6 +41,7 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <StatusBar backgroundColor="#1F5FD9" barStyle="dark-content" />
         <Provider store={store}>
         <Toast />
         <Stack

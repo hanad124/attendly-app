@@ -1,13 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { apiSlice } from "./apiSlice";
 import { setupListeners } from "@reduxjs/toolkit/query";
+import { periodsApi } from "./periods";
+import { leaderboardApi } from "./leaderboard";
 
 export const store = configureStore({
   reducer: {
-    [apiSlice.reducerPath]: apiSlice.reducer,
+    [periodsApi.reducerPath]: periodsApi.reducer,
+    [leaderboardApi.reducerPath]: leaderboardApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(apiSlice.middleware),
+    getDefaultMiddleware()
+      .concat(periodsApi.middleware)
+      .concat(leaderboardApi.middleware),
 });
 
 setupListeners(store.dispatch);

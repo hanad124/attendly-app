@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "./baseQuery";
 
-export const apiSlice = createApi({
+export const periodsApi = createApi({
   reducerPath: "periods",
   baseQuery: baseQuery,
   tagTypes: ["periods"],
@@ -18,4 +18,4 @@ export const apiSlice = createApi({
 
 
 
-export const { useGetSchedulesQuery } = apiSlice;
+export const { useGetSchedulesQuery } = periodsApi;
