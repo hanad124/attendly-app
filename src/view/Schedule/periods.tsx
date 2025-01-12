@@ -146,7 +146,7 @@ export default function Schedule() {
   const renderPeriodDetails = useCallback(
     (period: any) => (
       <View className="bg-primary/10 border-[.5px] border-primary rounded-lg p-4 space-y-3">
-        <Text className="text-primary text-lg font-semibold">
+        <Text className="text-primary text- font-medium">
           {period.subject}
         </Text>
         <View className="space-y-2">

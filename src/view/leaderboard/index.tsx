@@ -112,12 +112,12 @@ const LeaderboardItem = ({
       </View>
 
       <View style={styles.expContainer}>
-        <View className="flex flex-row items-center gap-1">
-          <View className="p-1 py-[.8px] bg-green-500 rounded-sm">
+        <View className="flex flex-row items-center bg-transparent border border-slate-700 rounded-full px-2 py-[0.5px]">
+          {/* <View className="p-1 py-[.8px] bg-green-500 rounded-sm">
             <Text className="text-white text-sm">XP</Text>
-          </View>
-          <Text className="text-green-500 font-bold text-lg">
-            {item.exp.toLocaleString()}
+          </View> */}
+          <Text className="text-slate-700 font-bold ">
+            {item.percentage}%
           </Text>
         </View>
       </View>
@@ -153,7 +153,8 @@ const Leaderboard = () => {
   };
 
   const rankings = leaderboardData?.data?.results[1]?.rankings || [];
-  const hasMore = rankings.length >= 10; // Assuming if we got 10 items, there might be more
+  const hasMore = rankings.length >= 10;
+
 
   // Get top 3 for the header
   const topThree = rankings.slice(0, 3).map(ranking => ({
@@ -161,6 +162,7 @@ const Leaderboard = () => {
     rank: ranking.rank,
     name: "Student Name",
     username: `student${ranking.rank}`,
+    percentage: ranking.attendance_percentage,
     exp: ranking.points,
     avatar: undefined,
   }));
@@ -173,6 +175,7 @@ const Leaderboard = () => {
     username: `student${ranking.rank}`,
     exp: ranking.points,
     avatar: undefined,
+    percentage: ranking.attendance_percentage,
     isCurrentUser: false,
   }));
 
@@ -189,50 +192,47 @@ const Leaderboard = () => {
     );
   }
 
-  return (
-    <View style={styles.container}>
-      <FlatList
-        ListHeaderComponent={() => (
-          <>
-            <LeaderboardHeader topThree={topThree} />
-            <View style={styles.listContainer}>
-              {otherUsers.map((item, index) => (
-                <LeaderboardItem
-                  key={item.id}
-                  item={item}
-                  isLast={index === otherUsers.length - 1}
-                />
-              ))}
+  const renderItem = ({ item }: { item: LeaderboardEntry }) => (
+    <LeaderboardItem
+      key={item.id}
+      item={item}
+      isLast={item.rank === rankings.length}
+    />
+  );
+
+  const ListFooter = () => (
+    hasMore ? (
+      <TouchableOpacity
+        onPress={handleViewMore}
+        disabled={isFetching}
+        className="flex flex-row items-center justify-center mt-7 mb-5"
+      >
+        <Animated.View 
+          entering={FadeIn}
+          className={`flex flex-row gap-2 items-center bg-white px-10 py-4 rounded-lg border border-gray-200 ${
+            isFetching ? "opacity-50" : ""
+          }`}
+        >
+          {isFetching ? (
+            <View className="flex flex-row items-center gap-2">
+              <ActivityIndicator size="small" color={PRIMARY_COLOR} />
+              <Text className="text-gray-700">Loading...</Text>
             </View>
-          </>
-        )}
-        ListFooterComponent={() => 
-          hasMore ? (
-            <TouchableOpacity
-              onPress={handleViewMore}
-              disabled={isFetching}
-              className="flex flex-row items-center justify-center mt-7 mb-5"
-            >
-              <Animated.View 
-                entering={FadeIn}
-                className={`flex flex-row gap-2 items-center bg-white px-10 py-4 rounded-lg border border-gray-200 ${
-                  isFetching ? "opacity-50" : ""
-                }`}
-              >
-                {isFetching ? (
-                  <View className="flex flex-row items-center gap-2">
-                    <ActivityIndicator size="small" color={PRIMARY_COLOR} />
-                    <Text className="text-gray-700">Loading...</Text>
-                  </View>
-                ) : (
-                  <Text className="text-gray-700">View More</Text>
-                )}
-              </Animated.View>
-            </TouchableOpacity>
-          ) : null
-        }
-        data={[]} // Empty data since we're using header for content
-        renderItem={() => null}
+          ) : (
+            <Text className="text-gray-700">View More</Text>
+          )}
+        </Animated.View>
+      </TouchableOpacity>
+    ) : null
+  );
+
+  return (
+    <View style={styles.container} className="">
+      <FlatList
+        ListHeaderComponent={() => <LeaderboardHeader topThree={topThree} />}
+        data={otherUsers}
+        renderItem={renderItem}
+        ListFooterComponent={ListFooter}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContent}
       />

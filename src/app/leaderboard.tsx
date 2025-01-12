@@ -1,16 +1,16 @@
 import LeaderBoard from "@/view/leaderboard";
-import { ScrollView } from "react-native";
+import { View } from "react-native";
 
 const leaderBoardPage = () => {
   return (
-    <ScrollView 
-      contentContainerStyle={{
+    <View 
+      style={{
         flex: 1,
         backgroundColor: "#fff",
       }}
     >
       <LeaderBoard />
-    </ScrollView>
+    </View>
   );
 };
 

@@ -9,6 +9,7 @@ interface TopThreeUser {
   username: string;
   avatar: string;
   exp: number;
+  percentage: number;
 }
 
 interface Props {
@@ -32,9 +33,9 @@ const TopThreeLeaderboard: React.FC<Props> = ({ users }) => {
       3: '#CD7F32', // Bronze
     };
 
-    const avatarSize = rank === 1 ? 88 : 72;
-    const badgeSize = rank === 1 ? 32 : 28;
-    const fontSize = rank === 1 ? 20 : 16;
+    const avatarSize = rank === 1 ? 72 : 56;
+    const badgeSize = rank === 1 ? 28 : 24;
+    const fontSize = rank === 1 ? 16 : 14;
 
     return (
       <View style={[
@@ -74,15 +75,15 @@ const TopThreeLeaderboard: React.FC<Props> = ({ users }) => {
         </View>
         <Text style={[
           styles.name,
-          { fontSize: rank === 1 ? 16 : 14, marginTop: badgeSize/2 }
+          { fontSize: rank === 1 ? 14 : 12, marginTop: badgeSize/2 }
         ]} numberOfLines={1}>
           {user.name}
         </Text>
         <Text style={[
           styles.score,
           { color: rankColors[rank as keyof typeof rankColors] }
-        ]}>
-          {user.exp.toLocaleString()} exp
+        ]} className='font-bold'>
+          {user.percentage.toFixed(2)}%
         </Text>
       </View>
     );
@@ -111,13 +112,13 @@ const styles = StyleSheet.create({
   },
   firstPlaceContainer: {
     marginBottom: 0,
-    transform: [{ scale: 1.1 }]
+    transform: [{ scale: 1.05 }]
   },
   secondPlaceContainer: {
-    marginTop: 20,
+    marginTop: 16,
   },
   thirdPlaceContainer: {
-    marginTop: 20,
+    marginTop: 16,
   },
   avatarContainer: {
     position: 'relative',
@@ -166,7 +167,7 @@ const styles = StyleSheet.create({
   },
   score: {
     fontSize: 12,
-    fontWeight: '500',
+    fontWeight: '700',
   },
 });
 

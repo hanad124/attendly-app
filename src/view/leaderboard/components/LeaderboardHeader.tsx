@@ -209,6 +209,7 @@ const styles = StyleSheet.create({
   container: {
     width: width,
     overflow: "hidden",
+
   },
   gradient: {
     paddingTop: 0,
@@ -219,7 +220,7 @@ const styles = StyleSheet.create({
   },
   content: {
     zIndex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: 20,    
   },
   topBar: {
     flexDirection: "row",

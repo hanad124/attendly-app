@@ -5,5 +5,6 @@ export interface LeaderboardEntry {
   username: string;
   avatar: string;
   exp: number;
+  percentage: number;
   isCurrentUser?: boolean;
 }
