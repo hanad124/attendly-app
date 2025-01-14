@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Check } from "lucide-react-native";
 
-export default function PurchaseSuccessPage() {
+export default function AttendanceSuccessPage() {
   const router = useRouter();
 
   const handleBackToHome = () => {
@@ -25,11 +25,11 @@ export default function PurchaseSuccessPage() {
         </View>
         
         <Text className="text-3xl font-bold text-gray-800 mt-6 text-center">
-          Purchase Successful
+          Attendance Success
         </Text>
         
         <Text className="text-lg text-gray-600 mt-4 text-center px-4">
-          You purchased the package and activated successfully.
+          You have successfully marked your attendance.
         </Text>
         
         <View className="px-8 w-full">

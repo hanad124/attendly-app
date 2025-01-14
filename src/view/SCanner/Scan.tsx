@@ -109,7 +109,7 @@ export default function Scan() {
         console.log('QR Code detected:', data);
         
         await new Promise(resolve => setTimeout(resolve, 500));
-        router.push(`/purchaseSuccess`);
+        router.push(`/attendance-success`);
         
         setTimeout(() => {
           setQrDetected(false);

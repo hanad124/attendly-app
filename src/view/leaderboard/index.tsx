@@ -136,8 +136,6 @@ const Leaderboard = () => {
 
   const user = useAuthStore((state) => state.user)
 
-  console.log({"user": user.id})
-
   const loggedUserId = user.id
 
 
