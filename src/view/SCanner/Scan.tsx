@@ -70,7 +70,7 @@ export default function Scan() {
     LocationService.setLocationConfig({
       targetLatitude: 2.033500,   
       targetLongitude: 45.319611, 
-      allowedRadius: 6, 
+      allowedRadius: 16, 
     });
 
     checkLocationServices();

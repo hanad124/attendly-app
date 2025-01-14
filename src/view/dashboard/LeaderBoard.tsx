@@ -89,12 +89,10 @@ const LoadingSkeleton = () => {
           />
         </View>
       </View>
-      <View className="border-2 border-gray-200 rounded-full p-[.8px] overflow-hidden">
-        <View className="w-12 h-12 bg-gray-200 rounded-full overflow-hidden">
-          <Animated.View
-            style={[{ width: "100%", height: "100%", backgroundColor: "#fff" }, getAnimatedStyle()]}
-          />
-        </View>
+      <View className="w-12 h-12 bg-gray-200 rounded-full overflow-hidden">
+        <Animated.View
+          style={[{ width: "100%", height: "100%", backgroundColor: "#fff" }, getAnimatedStyle()]}
+        />
       </View>
       <View className="flex-1 ml-3">
         <View className="w-32 h-4 bg-gray-200 rounded mb-2 overflow-hidden">
@@ -120,7 +118,7 @@ const LoadingSkeleton = () => {
 
   return (
     <View>
-      <View className="rounded-lg overflow-hidden border border-primary/20">
+      <View className="rounded-lg overflow-hidden ">
         <SkeletonItem isTop3={true} />
         <SkeletonItem isTop3={true} />
         <SkeletonItem isTop3={true} />
@@ -129,6 +127,15 @@ const LoadingSkeleton = () => {
       </View>
     </View>
   );
+};
+
+const getInitials = (name: string) => {
+  return name
+    .split(" ")
+    .map((part) => part[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 };
 
 export default function LeaderBoard() {
@@ -160,7 +167,7 @@ export default function LeaderBoard() {
     id: index + 1,
     name: `${ranking.student_id.firstName} ${ranking.student_id.lastName}`,
     score: ranking.attendance_percentage.toFixed(2),
-    image: `https://mighty.tools/mockmind-api/content/human/${Math.floor(Math.random() * 100)}.jpg`,
+    initials: getInitials(`${ranking.student_id.firstName} ${ranking.student_id.lastName}`)
   }));
 
   if (isLoading) {
@@ -199,24 +206,23 @@ export default function LeaderBoard() {
               leader.id <= 3 ? "bg-primary/10 " : ""
             } ${
               leader.id === 1
-                ? "rounded-t-lg border-t border-x  border-primary/70"
+                ? "rounded-t-lg   border-primary/70"
                 : ""
             } ${
-              leader.id === 3 ? "rounded-b-lg border border-primary/70" : ""
+              leader.id === 3 ? "rounded-b-lg  border-primary/70" : ""
             } ${
-              leader.id === 2 ? "border-x border-t border-primary/70" : ""
-            } p-3 `}
+              leader.id === 2 ? " border-primary/70" : ""
+            } py-2 px-3`}
           >
             <Text className="text-lg font-bold text-gray-800 w-8">
               #{leader.id}
             </Text>
-            <View className="border-2 border-primary rounded-full p-[.8px]">
-              <Image
-                source={{ uri: leader.image }}
-                className="w-12 h-12 rounded-full"
-              />
+            <View className="w-9 h-9 rounded-full bg-primary/20 border-[0.4px] border-primary/70 items-center justify-center">
+              <Text className="text-primary text-sm ">
+                {leader.initials}
+              </Text>
             </View>
-            <View className="flex-1 ml-3">
+            <View className="flex-1 ml-4">
               <Text className="text-base font-semibold text-gray-800">
                 {leader.name}
               </Text>

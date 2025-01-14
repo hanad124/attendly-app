@@ -20,6 +20,7 @@ import { Header } from "@/components/shared/Header";
 
 import confettiLeft from "@/assets/images/leader-board/confetti-left.png";
 import confettiRight from "@/assets/images/leader-board/confetti-right.png";
+import { getInitials } from "..";
 
 const PRIMARY_COLOR = "#1F5FD9";
 
@@ -198,7 +199,25 @@ const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({ topThree }) => {
               👑 {selectedFilter} Leaderboard 👑
             </Text>
           </View>
-          <TopThreeLeaderboard users={topThree} />
+          <TopThreeLeaderboard
+            users={topThree.map((user) => ({
+              ...user,
+              render: () => (
+                <View className="flex flex-col items-center">
+                  <View className="w-20 h-20 rounded-full bg-primary/20 border-[0.4px] border-primary/70 items-center justify-center mb-2">
+                    <Text className="text-primary text-lg">{getInitials(user.name)}</Text>
+                  </View>
+                  <Text className="text-base font-semibold text-gray-800 mb-1">{user.name}</Text>
+                  {user.isCurrentUser && (
+                    <View className="flex flex-row items-center justify-center bg-primary px-4 py-[0.5px] rounded-full border border-primary">
+                      <Text className="text-sm text-white font-medium">YOU</Text>
+                    </View>
+                  )}
+                  <Text className="text-sm text-gray-600">{user.percentage}%</Text>
+                </View>
+              ),
+            }))}
+          />
         </View>
       </LinearGradient>
     </View>

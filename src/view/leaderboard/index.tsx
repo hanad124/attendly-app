@@ -12,10 +12,11 @@ import LeaderboardHeader from "./components/LeaderboardHeader";
 import { LeaderboardEntry } from "./types";
 import { useGetLeaderboardQuery } from "@/stores/RTK/leaderboard";
 import Animated, { FadeIn, Layout } from "react-native-reanimated";
+import { useAuthStore } from "@/stores/auth";
 
 const PRIMARY_COLOR = "#1F5FD9";
 
-const getInitials = (name: string) => {
+export const getInitials = (name: string) => {
   return name
     .split(" ")
     .map((part) => part[0])
@@ -26,7 +27,7 @@ const getInitials = (name: string) => {
 
 // Loading skeleton for list items
 const LeaderboardItemSkeleton = () => (
-  <Animated.View 
+  <Animated.View
     entering={FadeIn}
     style={[styles.itemContainer]}
     className="p-4 flex flex-row items-center justify-between"
@@ -34,7 +35,10 @@ const LeaderboardItemSkeleton = () => (
     <View style={styles.rankContainer}>
       <View className="w-5 h-4 bg-gray-200 rounded animate-pulse" />
     </View>
-    <View style={[styles.avatarContainer]} className="bg-gray-200 animate-pulse" />
+    <View
+      style={[styles.avatarContainer]}
+      className="bg-gray-200 animate-pulse"
+    />
     <View style={styles.userInfo}>
       <View className="w-24 h-4 bg-gray-200 rounded animate-pulse mb-2" />
       <View className="w-16 h-3 bg-gray-200 rounded animate-pulse" />
@@ -59,7 +63,9 @@ const LeaderboardItem = ({
       entering={FadeIn}
       layout={Layout}
       style={[styles.itemContainer]}
-      className={`${!isLast ? "" : ""} p-4 flex flex-row items-center justify-between ${
+      className={`${
+        !isLast ? "" : ""
+      } p-4 flex flex-row items-center justify-between ${
         item.isCurrentUser && "bg-primary/20 border border-primary rounded-b-lg"
       }`}
     >
@@ -105,7 +111,9 @@ const LeaderboardItem = ({
         <Text
           style={styles.username}
           numberOfLines={1}
-          className={`${item.isCurrentUser ? "text-primary" : "text-slate-500"}`}
+          className={`${
+            item.isCurrentUser ? "text-primary" : "text-slate-500"
+          }`}
         >
           @{item.username}
         </Text>
@@ -116,9 +124,7 @@ const LeaderboardItem = ({
           {/* <View className="p-1 py-[.8px] bg-green-500 rounded-sm">
             <Text className="text-white text-sm">XP</Text>
           </View> */}
-          <Text className="text-slate-700 font-bold ">
-            {item.percentage}%
-          </Text>
+          <Text className="text-slate-700 font-bold ">{item.percentage}%</Text>
         </View>
       </View>
     </Animated.View>
@@ -128,27 +134,21 @@ const LeaderboardItem = ({
 const Leaderboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
+  const user = useAuthStore((state) => state.user)
+
+  console.log({"user": user.id})
+
+  const loggedUserId = user.id
+
+
   const { data: leaderboardData, isLoading, isFetching } = useGetLeaderboardQuery({
-    params: {
-      limit: 10,
-      page: currentPage,
-      query: { type: "Class" },
-      options: {
-        populate: [
-          {
-            path: "rankings.student_id",
-            model: "User",
-            select: "firstName lastName",
-            strictPopulate: false,
-          },
-        ],
-      },
-    },
+    currentPage
   });
+
 
   const handleViewMore = () => {
     if (!isFetching) {
-      setCurrentPage(prev => prev + 1);
+      setCurrentPage((prev) => prev + 1);
     }
   };
 
@@ -157,27 +157,36 @@ const Leaderboard = () => {
 
 
   // Get top 3 for the header
-  const topThree = rankings.slice(0, 3).map(ranking => ({
-    id: ranking._id,
-    rank: ranking.rank,
-    name: "Student Name",
-    username: `student${ranking.rank}`,
-    percentage: ranking.attendance_percentage,
-    exp: ranking.points,
-    avatar: undefined,
-  }));
+  const topThree = rankings.slice(0, 3).map((ranking) => {
+    const isCurrentUser = ranking.student_id.id === loggedUserId;
+    // console.log("Top 3 - Student ID:", ranking.student_id.id, "isCurrentUser:", isCurrentUser);
+    return {
+      id: ranking._id,
+      rank: ranking.rank,
+      name: ranking?.student_id.firstName + " " + ranking?.student_id.lastName,
+      username: `${ranking?.student_id.username}`,
+      percentage: ranking.attendance_percentage,
+      exp: ranking.points,
+      avatar: undefined,
+      isCurrentUser
+    };
+  });
 
   // Get users from rank 4 onwards
-  const otherUsers = rankings.slice(3).map(ranking => ({
-    id: ranking._id,
-    rank: ranking.rank,
-    name: "Student Name",
-    username: `student${ranking.rank}`,
-    exp: ranking.points,
-    avatar: undefined,
-    percentage: ranking.attendance_percentage,
-    isCurrentUser: false,
-  }));
+  const otherUsers = rankings.slice(3).map((ranking) => {
+    const isCurrentUser = ranking.student_id.id === loggedUserId;
+
+    return {
+      id: ranking._id,
+      rank: ranking.rank,
+      name: ranking?.student_id.firstName + " " + ranking?.student_id.lastName,
+      username: `${ranking?.student_id?.username}`,
+      exp: ranking.points,
+      avatar: undefined,
+      percentage: ranking.attendance_percentage,
+      isCurrentUser
+    };
+  });
 
   if (isLoading) {
     return (
@@ -200,14 +209,14 @@ const Leaderboard = () => {
     />
   );
 
-  const ListFooter = () => (
+  const ListFooter = () =>
     hasMore ? (
       <TouchableOpacity
         onPress={handleViewMore}
         disabled={isFetching}
         className="flex flex-row items-center justify-center mt-7 mb-5"
       >
-        <Animated.View 
+        <Animated.View
           entering={FadeIn}
           className={`flex flex-row gap-2 items-center bg-white px-10 py-4 rounded-lg border border-gray-200 ${
             isFetching ? "opacity-50" : ""
@@ -223,8 +232,7 @@ const Leaderboard = () => {
           )}
         </Animated.View>
       </TouchableOpacity>
-    ) : null
-  );
+    ) : null;
 
   return (
     <View style={styles.container} className="">
@@ -256,7 +264,6 @@ const styles = StyleSheet.create({
   itemContainer: {
     flexDirection: "row",
     alignItems: "center",
-    
   },
   currentUserContainer: {
     backgroundColor: PRIMARY_COLOR,
