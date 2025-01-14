@@ -7,6 +7,7 @@ import score3image from "@/assets/images/leader-board/score-3.png";
 import { useGetLeaderboardQuery } from "@/stores/RTK/leaderboard";
 import { Link } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
+import { useAuthStore } from "@/stores/auth";
 
 const useShimmerAnimation = () => {
   const shimmerValue = useRef(new Animated.Value(0)).current;
@@ -162,12 +163,16 @@ export default function LeaderBoard() {
     },
   });
 
+  const user = useAuthStore((state) => state.user);
+  const loggedUserId = user.id;
+
   const rankings = leaderboardData?.data?.results[1]?.rankings || [];
   const topFiveLeaders = rankings.slice(0, 5).map((ranking, index) => ({
     id: index + 1,
     name: `${ranking.student_id.firstName} ${ranking.student_id.lastName}`,
     score: ranking.attendance_percentage.toFixed(2),
-    initials: getInitials(`${ranking.student_id.firstName} ${ranking.student_id.lastName}`)
+    initials: getInitials(`${ranking.student_id.firstName} ${ranking.student_id.lastName}`),
+    isCurrentUser: ranking.student_id.id === loggedUserId
   }));
 
   if (isLoading) {
@@ -212,20 +217,29 @@ export default function LeaderBoard() {
               leader.id === 3 ? "rounded-b-lg  border-primary/70" : ""
             } ${
               leader.id === 2 ? " border-primary/70" : ""
+            } ${
+              leader.isCurrentUser ? "" : ""
             } py-2 px-3`}
           >
             <Text className="text-lg font-bold text-gray-800 w-8">
               #{leader.id}
             </Text>
             <View className="w-9 h-9 rounded-full bg-primary/20 border-[0.4px] border-primary/70 items-center justify-center">
-              <Text className="text-primary text-sm ">
+              <Text className="text-primary text-sm">
                 {leader.initials}
               </Text>
             </View>
             <View className="flex-1 ml-4">
-              <Text className="text-base font-semibold text-gray-800">
-                {leader.name}
-              </Text>
+              <View className="flex flex-row items-center gap-2">
+                <Text className="text-base font-semibold text-gray-800">
+                  {leader.name}
+                </Text>
+                {leader.isCurrentUser && (
+                  <View className="flex flex-row items-center justify-center bg-primary px-3 py-[0.5px] rounded-full border border-primary">
+                    <Text className="text-sm text-white font-medium">YOU</Text>
+                  </View>
+                )}
+              </View>
               <Text className="text text-primary font-semibold">
                 {leader.score}%
               </Text>
