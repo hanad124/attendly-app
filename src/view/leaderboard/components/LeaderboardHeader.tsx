@@ -109,12 +109,12 @@ const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({ topThree }) => {
   return (
     <View style={styles.container}>
       <LinearGradient
-        colors={[PRIMARY_COLOR, `${PRIMARY_COLOR}EE`, `${PRIMARY_COLOR}DD`]}
+        colors={[PRIMARY_COLOR, `${PRIMARY_COLOR}`, `${PRIMARY_COLOR}`]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.gradient}
       >
-        <View className="flex flex-row items-center justify-between  mt-8 mx-2 " style={{ zIndex: 2 }}>
+        <View className="flex flex-row items-center justify-between  mt-2 mx-2 " style={{ zIndex: 2 }}>
           <TouchableOpacity
             onPress={() => router.back()}
             className="flex flex-row items-center gap-2ml-5"
@@ -134,7 +134,7 @@ const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({ topThree }) => {
             <ChevronDown size={16} color="#ffffff" />
           </TouchableOpacity>
         </View>
-        <BackgroundPattern />
+        {/* <BackgroundPattern /> */}
         {/* Confetti Images */}
         <View style={[styles.confettiContainer, { zIndex: 0 }]}>
           <Image

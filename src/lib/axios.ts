@@ -1,8 +1,8 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
-export const baseURL = "http://10.1.1.29:8080/v1";
-// export const baseURL = "http://192.168.1.20:8080/v1";
+// export const baseURL = "http://10.1.1.29:8080/v1";
+export const baseURL = "http://192.168.113.125:8080/v1/";
 
 export const axiosInstance = axios.create({
   baseURL,

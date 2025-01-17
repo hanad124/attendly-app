@@ -167,13 +167,32 @@ export default function LeaderBoard() {
   const loggedUserId = user.id;
 
   const rankings = leaderboardData?.data?.results[1]?.rankings || [];
+
+  // Find logged user's ranking
+  const userRanking = rankings.find(ranking => ranking.student_id.id === loggedUserId);
+
+  // Get top 5 rankings
   const topFiveLeaders = rankings.slice(0, 5).map((ranking, index) => ({
-    id: index + 1,
+    id: ranking.rank,
     name: `${ranking.student_id.firstName} ${ranking.student_id.lastName}`,
     score: ranking.attendance_percentage.toFixed(2),
     initials: getInitials(`${ranking.student_id.firstName} ${ranking.student_id.lastName}`),
     isCurrentUser: ranking.student_id.id === loggedUserId
   }));
+
+  // Check if user is not in top 5 and add them to the bottom
+  const isUserInTopFive = topFiveLeaders.some(leader => leader.isCurrentUser);
+  const displayLeaders = [...topFiveLeaders];
+
+  if (userRanking && !isUserInTopFive) {
+    displayLeaders.push({
+      id: userRanking.rank,
+      name: `${userRanking.student_id.firstName} ${userRanking.student_id.lastName}`,
+      score: userRanking.attendance_percentage.toFixed(2),
+      initials: getInitials(`${userRanking.student_id.firstName} ${userRanking.student_id.lastName}`),
+      isCurrentUser: true
+    });
+  }
 
   if (isLoading) {
     return (
@@ -204,21 +223,23 @@ export default function LeaderBoard() {
       </View>
 
       <View className="">
-        {topFiveLeaders.map((leader) => (
+        {displayLeaders.map((leader, index) => (
           <View
             key={leader.id}
             className={`flex-row items-center ${
               leader.id <= 3 ? "bg-primary/10 " : ""
             } ${
-              leader.id === 1
-                ? "rounded-t-lg   border-primary/70"
+              index === 0
+                ? "rounded-t-lg border-primary/70"
                 : ""
             } ${
-              leader.id === 3 ? "rounded-b-lg  border-primary/70" : ""
+              index === 2 && displayLeaders.length <= 3 ? "rounded-b-lg border-primary/70" : ""
             } ${
-              leader.id === 2 ? " border-primary/70" : ""
+              index === 4 && !isUserInTopFive ? "mt-2" : ""
             } ${
-              leader.isCurrentUser ? "" : ""
+              leader.id === 2 ? "border-primary/70" : ""
+            } ${
+              leader.isCurrentUser && leader.id > 3 ? "bg-primary/5 rounded-lg" : ""
             } py-2 px-3`}
           >
             <Text className="text-lg font-bold text-gray-800 w-8">

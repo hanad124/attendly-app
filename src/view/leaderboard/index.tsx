@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
+import { SafeAreaView as SafeAreaContext, Edge } from "react-native-safe-area-context";
 import LeaderboardHeader from "./components/LeaderboardHeader";
 import { LeaderboardEntry } from "./types";
 import { useGetLeaderboardQuery } from "@/stores/RTK/leaderboard";
@@ -66,7 +67,7 @@ const LeaderboardItem = ({
       className={`${
         !isLast ? "" : ""
       } p-4 flex flex-row items-center justify-between ${
-        item.isCurrentUser && "bg-primary/20 border border-primary rounded-b-lg"
+        item.isCurrentUser && "bg-primary/20"
       }`}
     >
       <View style={styles.rankContainer}>
@@ -134,15 +135,17 @@ const LeaderboardItem = ({
 const Leaderboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const user = useAuthStore((state) => state.user)
+  const user = useAuthStore((state) => state.user);
 
-  const loggedUserId = user.id
+  const loggedUserId = user.id;
 
-
-  const { data: leaderboardData, isLoading, isFetching } = useGetLeaderboardQuery({
-    currentPage
+  const {
+    data: leaderboardData,
+    isLoading,
+    isFetching,
+  } = useGetLeaderboardQuery({
+    currentPage,
   });
-
 
   const handleViewMore = () => {
     if (!isFetching) {
@@ -152,7 +155,6 @@ const Leaderboard = () => {
 
   const rankings = leaderboardData?.data?.results[1]?.rankings || [];
   const hasMore = rankings.length >= 10;
-
 
   // Get top 3 for the header
   const topThree = rankings.slice(0, 3).map((ranking) => {
@@ -166,7 +168,7 @@ const Leaderboard = () => {
       percentage: ranking.attendance_percentage,
       exp: ranking.points,
       avatar: undefined,
-      isCurrentUser
+      isCurrentUser,
     };
   });
 
@@ -182,7 +184,7 @@ const Leaderboard = () => {
       exp: ranking.points,
       avatar: undefined,
       percentage: ranking.attendance_percentage,
-      isCurrentUser
+      isCurrentUser,
     };
   });
 
@@ -233,15 +235,19 @@ const Leaderboard = () => {
     ) : null;
 
   return (
-    <View style={styles.container} className="">
-      <FlatList
-        ListHeaderComponent={() => <LeaderboardHeader topThree={topThree} />}
-        data={otherUsers}
-        renderItem={renderItem}
-        ListFooterComponent={ListFooter}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.listContent}
-      />
+    <View style={{ flex: 1, backgroundColor: 'white' }}>
+      <SafeAreaContext edges={['top']} style={{ backgroundColor: PRIMARY_COLOR }} />
+      <View style={styles.container} className="bg-white">
+        <FlatList
+          ListHeaderComponent={() => <LeaderboardHeader topThree={topThree} />}
+          data={otherUsers}
+          renderItem={renderItem}
+          ListFooterComponent={ListFooter}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listContent}
+        />
+      </View>
+      <SafeAreaContext edges={['bottom']} style={{ backgroundColor: 'white' }} />
     </View>
   );
 };
@@ -249,7 +255,7 @@ const Leaderboard = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    // backgroundColor: "#fff",
   },
   listContainer: {
     backgroundColor: "#fff",

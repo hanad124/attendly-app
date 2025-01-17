@@ -34,6 +34,7 @@ export interface User {
   isEmailVerified: boolean;
   username: string;
   status: string;
+  semester?: string;
   dateCreated: string;
   lastLogin: string;
   id: string;

@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { Check } from "lucide-react-native";
+import { Check, Info } from "lucide-react-native";
 
 export default function AttendanceSuccessPage() {
   const router = useRouter();
@@ -25,7 +25,11 @@ export default function AttendanceSuccessPage() {
             <View className="absolute inset-0 bg-blue-300/70 rounded-full opacity-50 scale-125" />
             
             <View className="bg-blue-500 rounded-full p-5 z-10 relative">
-              <Check size={60} color="white" strokeWidth={2} />
+              {alreadyVerified === 'true' ? (
+                <Info size={60} color="white" strokeWidth={2} />
+              ) : (
+                <Check size={60} color="white" strokeWidth={2} />
+              )}
             </View>
           </View>
           

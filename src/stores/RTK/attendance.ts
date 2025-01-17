@@ -14,7 +14,13 @@ export const attendanceApi = createApi({
       }),
       invalidatesTags: ["attendance"],
     }),
+
+    // get Attendance stats
+    AttendanceStats: builder.query<any, { studentId: string; semesterId: string }>({
+      query: ({ studentId, semesterId }) => `/attendance_stats/student/${studentId}/semester/${semesterId}`,
+      providesTags: ["attendance"],
+    }),
   }),
 });
 
-export const { useVerifyAttendanceMutation } = attendanceApi;
+export const { useVerifyAttendanceMutation, useAttendanceStatsQuery } = attendanceApi;
