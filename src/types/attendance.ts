@@ -1,17 +1,17 @@
 export interface QRSessionData {
-    class_id: string;
-    period_id: string;
-    qr_code: string;
+    id: string;
     valid_from: string;
     valid_until: string;
     location: {
         type: "Point";
-        coordinates: [number, number];
-        radius: number;
+        coordinates: [number, number]; // [latitude, longitude]
     };
+    allowed_radius?: number;
+    class_id: string;
+    period_id: string;
+    qr_code: string;
     status: string;
     createdBy: string;
-    id: string;
 }
 
 export interface AttendanceVerificationPayload {

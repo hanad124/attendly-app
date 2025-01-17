@@ -65,11 +65,15 @@ class LocationService {
 
       console.log('Getting current position...');
       const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
+        accuracy: Location.Accuracy.BestForNavigation,
+        mayShowUserSettingsDialog: true,
+        maximumAge: 10000, // Use cached location if less than 10 seconds old
       });
+      
       console.log('Current position:', {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
+        accuracy: location.coords.accuracy,
       });
 
       const distance = this.calculateDistance(
@@ -79,21 +83,25 @@ class LocationService {
         this.locationConfig.targetLongitude
       );
 
+      // Add a small buffer to the allowed radius to account for GPS drift
+      const effectiveRadius = this.locationConfig.allowedRadius + 2; // Add 2 meters buffer
+
       console.log('Distance calculation:', {
         currentLocation: {
           latitude: location.coords.latitude,
           longitude: location.coords.longitude,
+          accuracy: location.coords.accuracy,
         },
         targetLocation: {
           latitude: this.locationConfig.targetLatitude,
           longitude: this.locationConfig.targetLongitude,
         },
         distance: Math.round(distance),
-        allowedRadius: this.locationConfig.allowedRadius,
+        allowedRadius: effectiveRadius,
       });
 
       return {
-        isAllowed: distance <= this.locationConfig.allowedRadius,
+        isAllowed: distance <= effectiveRadius,
         distance: Math.round(distance),
       };
     } catch (error) {
