@@ -6,7 +6,6 @@ import score2image from "@/assets/images/leader-board/score-2.png";
 import score3image from "@/assets/images/leader-board/score-3.png";
 import { useGetLeaderboardQuery } from "@/stores/RTK/leaderboard";
 import { Link } from "expo-router";
-import { LinearGradient } from "expo-linear-gradient";
 import { useAuthStore } from "@/stores/auth";
 
 const useShimmerAnimation = () => {

@@ -6,7 +6,7 @@ import AttendanceStates from "@/view/attendance";
 export default function Attendance() {
   return (
     <SafeAreaView style={styles.container}>
-      <Header title="Attendance" showBackButton={true} />
+      <Header title="Attendance Stats" showBackButton={true} />
       <AttendanceStates />
     </SafeAreaView>
   );

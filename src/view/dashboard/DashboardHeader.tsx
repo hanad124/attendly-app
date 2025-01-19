@@ -4,7 +4,9 @@ import Avator from "./Avator";
 import { Animated } from "react-native";
 import { Percent, CircleCheckBig, School, CircleX } from "lucide-react-native";
 
-import { useAttendanceStatsQuery } from "@/stores/RTK/attendance";
+import {
+  useAttendanceStatsQuery,
+} from "@/stores/RTK/attendance";
 import { useAuthStore } from "@/stores/auth";
 
 const LoadingSkeleton = () => {

@@ -121,8 +121,9 @@ export default function Scan() {
       LocationService.setLocationConfig({
         targetLatitude: qrSessionData.location.coordinates[0],
         targetLongitude: qrSessionData.location.coordinates[1],
-        allowedRadius: qrSessionData.allowed_radius || 16,
+        allowedRadius: qrSessionData.location.radius || 16,
       });
+
 
       // Request location permission
       const hasPermission = await LocationService.requestLocationPermission();

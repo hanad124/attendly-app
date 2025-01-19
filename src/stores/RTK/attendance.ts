@@ -16,11 +16,26 @@ export const attendanceApi = createApi({
     }),
 
     // get Attendance stats
-    AttendanceStats: builder.query<any, { studentId: string; semesterId: string }>({
-      query: ({ studentId, semesterId }) => `/attendance_stats/student/${studentId}/semester/${semesterId}`,
+    AttendanceStats: builder.query<
+      any,
+      { studentId: string; semesterId: string }
+    >({
+      query: ({ studentId, semesterId }) =>
+        `/attendance_stats/student/${studentId}/semester/${semesterId}`,
+      providesTags: ["attendance"],
+    }),
+
+    // get Attendance verifications
+    getAttendanceVerifications: builder.query<any, { student_id: string }>({
+      query: ({ student_id }) =>
+        `/attendance_verifications/student?student_id=${student_id}`,
       providesTags: ["attendance"],
     }),
   }),
 });
 
-export const { useVerifyAttendanceMutation, useAttendanceStatsQuery } = attendanceApi;
+export const {
+  useVerifyAttendanceMutation,
+  useAttendanceStatsQuery,
+  useGetAttendanceVerificationsQuery,
+} = attendanceApi;

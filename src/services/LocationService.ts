@@ -84,7 +84,7 @@ class LocationService {
       );
 
       // Add a small buffer to the allowed radius to account for GPS drift
-      const effectiveRadius = this.locationConfig.allowedRadius + 2; // Add 2 meters buffer
+      const effectiveRadius = this.locationConfig.allowedRadius; // Add 2 meters buffer
 
       console.log('Distance calculation:', {
         currentLocation: {

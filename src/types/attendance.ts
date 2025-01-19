@@ -5,6 +5,7 @@ export interface QRSessionData {
     location: {
         type: "Point";
         coordinates: [number, number]; // [latitude, longitude]
+        radius: number;
     };
     allowed_radius?: number;
     class_id: string;
