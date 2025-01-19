@@ -26,6 +26,11 @@ interface Tokens {
   refresh: TokenInfo;
 }
 
+interface Semester {
+  id: string;
+  name: string;
+}
+
 export interface User {
   email: string;
   role: Role;
@@ -34,7 +39,7 @@ export interface User {
   isEmailVerified: boolean;
   username: string;
   status: string;
-  semester?: string;
+  semester?:  Partial<Semester>;
   dateCreated: string;
   lastLogin: string;
   id: string;

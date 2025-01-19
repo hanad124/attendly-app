@@ -65,12 +65,15 @@ export default function DashboardHeader() {
   const { user } = useAuthStore();
 
   const student_id = user.id
-  const semester = user.semester
+  const semester = user.semester.id as any
 
   const { data: stats, isLoading } = useAttendanceStatsQuery({
     studentId: student_id,
     semesterId: semester
   });
+
+  
+
 
   if (isLoading) {
     return (

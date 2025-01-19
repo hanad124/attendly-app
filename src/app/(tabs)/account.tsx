@@ -112,15 +112,18 @@ export default function Account() {
         contentContainerStyle={styles.scrollContent}
       >
         <View style={styles.profileSection}>
-          <View style={styles.avatar}>
-            <MaterialIcons name="account-circle" size={80} color="#4f46e5" />
+          <View
+            style={styles.avatar}
+            className="bg-primary/20 border border-primary"
+          >
+            <MaterialIcons name="account-circle" size={80} color="#1F5FD9" />
           </View>
           <View style={styles.headerText}>
             <Text style={styles.username}>
               {userData.firstName} {userData.lastName}
             </Text>
             <Text style={styles.studentId}>{userData.username}</Text>
-            <Text style={styles.email}>{userData.email}</Text>
+            {/* <Text style={styles.email}>{userData.email}</Text> */}
           </View>
         </View>
 
@@ -200,7 +203,7 @@ const styles = StyleSheet.create({
     paddingVertical: 0,
   },
   avatar: {
-    backgroundColor: "#ede9fe",
+    // backgroundColor: "#1F5FD9",
     borderRadius: 50,
     padding: 5,
     marginBottom: 16,
@@ -263,7 +266,6 @@ const styles = StyleSheet.create({
     gap: 8,
     backgroundColor: "#fef2f2",
     borderRadius: 12,
-
   },
   logoutText: {
     color: "#ef4444",

@@ -1,8 +1,8 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
-// export const baseURL = "http://10.1.1.29:8080/v1";
-export const baseURL = "http://192.168.222.197:8080/v1/";
+export const baseURL = "http://10.1.1.29:8080/v1";
+// export const baseURL = "http://192.168.222.197:8080/v1/";
 
 export const axiosInstance = axios.create({
   baseURL,
@@ -35,9 +35,9 @@ axiosInstance.interceptors.response.use(
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      
+
       await SecureStore.deleteItemAsync("token");
-      
+
       return Promise.reject(error);
     }
 
