@@ -1,17 +1,13 @@
-import { View, Text, StyleSheet, SafeAreaView } from "react-native";
+import { StyleSheet, SafeAreaView } from "react-native";
 import React from "react";
-import { Link } from "expo-router";
 import { Header } from "@/components/shared/Header";
+import AttendanceStates from "@/view/attendance";
 
 export default function Attendance() {
   return (
     <SafeAreaView style={styles.container}>
       <Header title="Attendance" showBackButton={true} />
-      <View style={styles.header}>
-        <Text style={styles.title}>Attendance</Text>
-
-        <Link href="/testPage">Go to Test Page</Link>
-      </View>
+      <AttendanceStates />
     </SafeAreaView>
   );
 }
@@ -23,9 +19,5 @@ const styles = StyleSheet.create({
   },
   header: {
     padding: 16,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
   },
 });
