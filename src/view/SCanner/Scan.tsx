@@ -69,42 +69,50 @@ export default function Scan() {
       setIsProcessing(true);
       setIsScanning(false);
       setError(null);
-      setStatus("Checking location services...");
+      setStatus("Processing QR code...");
 
-      // Check location services
-      const enabled = await Location.hasServicesEnabledAsync();
-      setIsLocationEnabled(enabled);
-
-      if (!enabled) {
-        throw new Error("Please enable location services");
-      }
-
-      const { status: permStatus } =
-        await Location.getForegroundPermissionsAsync();
-      if (permStatus !== "granted") {
-        const { status: newStatus } =
-          await Location.requestForegroundPermissionsAsync();
-        if (newStatus !== "granted") {
-          throw new Error("Location permission required");
-        }
-      }
+      // Debug log
+      console.log("Scanned QR Data:", data);
 
       // Parse QR data
       setStatus("Verifying QR code...");
       let qrSessionData: QRSessionData;
       try {
-        const cleanData = data
-          .trim()
-          .replace(/'/g, '"')
-          .replace(/^['"]|['"]$/g, "");
-        qrSessionData = JSON.parse(cleanData);
-      } catch (error) {
-        throw new Error("Invalid QR code");
+        // First try direct JSON parse
+        try {
+          qrSessionData = JSON.parse(data);
+        } catch {
+          // If direct parse fails, try cleaning the data
+          const cleanData = data
+            .trim()
+            .replace(/[\u200B-\u200D\uFEFF]/g, '') // Remove zero-width spaces
+            .replace(/'/g, '"')
+            .replace(/^["']|["']$/g, "");
+          console.log("Cleaned QR Data:", cleanData);
+          qrSessionData = JSON.parse(cleanData);
+        }
+      } catch (parseError) {
+        console.error("QR Parse Error:", parseError);
+        throw new Error("Invalid QR code format. Please scan a valid attendance QR code.");
       }
 
-      // Validate QR data
-      if (!qrSessionData.id || !qrSessionData.location?.coordinates) {
-        throw new Error("Invalid QR code data");
+      // Debug log parsed data
+      console.log("Parsed QR Data:", qrSessionData);
+
+      // Validate QR data structure
+      if (!qrSessionData || typeof qrSessionData !== 'object') {
+        throw new Error("Invalid QR code structure");
+      }
+
+      // Validate required fields
+      // if (!qrSessionData.id) {
+      //   throw new Error("Missing session ID in QR code");
+      // }
+
+      if (!qrSessionData.location?.coordinates ||
+          !Array.isArray(qrSessionData.location.coordinates) ||
+          qrSessionData.location.coordinates.length !== 2) {
+        throw new Error("Invalid location data in QR code");
       }
 
       // Check time validity
@@ -113,8 +121,24 @@ export default function Scan() {
       const validFrom = new Date(qrSessionData.valid_from);
       const validUntil = new Date(qrSessionData.valid_until);
 
-      if (now < validFrom || now > validUntil) {
-        throw new Error("QR code expired or not yet valid");
+      if (isNaN(validFrom.getTime()) || isNaN(validUntil.getTime())) {
+        throw new Error("Invalid time format in QR code");
+      }
+
+      console.log('Time validation:', {
+        now: now.toISOString(),
+        validFrom: validFrom.toISOString(),
+        validUntil: validUntil.toISOString(),
+        isBeforeValidFrom: now < validFrom,
+        isAfterValidUntil: now > validUntil
+      });
+
+      if (now < validFrom) {
+        throw new Error("QR code is not yet valid. Please wait until the specified start time.");
+      }
+      
+      if (now > validUntil) {
+        throw new Error("QR code has expired.");
       }
 
       // Set location configuration and request permission
@@ -123,7 +147,6 @@ export default function Scan() {
         targetLongitude: qrSessionData.location.coordinates[1],
         allowedRadius: qrSessionData.location.radius || 16,
       });
-
 
       // Request location permission
       const hasPermission = await LocationService.requestLocationPermission();
@@ -197,6 +220,8 @@ export default function Scan() {
       }
     }
   };
+
+  
 
   return (
     <View style={styles.container}>
