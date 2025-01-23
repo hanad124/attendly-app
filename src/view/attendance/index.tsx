@@ -229,8 +229,8 @@ const LoadingSkeleton = () => {
 const AttendanceStates = () => {
   const { user } = useAuthStore();
 
-  const student_id = user.id;
-  const semester = user.semester.id as any;
+  const student_id = user?.id;
+  const semester = user?.semester?.id as any;
 
   const { data: stats, isLoading } = useAttendanceStatsQuery({
     studentId: student_id,
@@ -246,8 +246,8 @@ const AttendanceStates = () => {
 
   if (!stats) return <Text>No attendance data available</Text>;
 
-  const lastAttendanceDate = stats.last_attendance_date
-    ? format(new Date(stats.last_attendance_date), "MMM dd, yyyy")
+  const lastAttendanceDate = stats?.last_attendance_date
+    ? format(new Date(stats?.last_attendance_date), "MMM dd, yyyy")
     : "N/A";
 
   return (

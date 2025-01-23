@@ -163,32 +163,32 @@ export default function LeaderBoard() {
   });
 
   const user = useAuthStore((state) => state.user);
-  const loggedUserId = user.id;
+  const loggedUserId = user?.id;
 
   const rankings = leaderboardData?.data?.results[1]?.rankings || [];
 
   // Find logged user's ranking
-  const userRanking = rankings.find(ranking => ranking.student_id.id === loggedUserId);
+  const userRanking = rankings.find(ranking => ranking?.student_id?.id === loggedUserId);
 
   // Get top 5 rankings
-  const topFiveLeaders = rankings.slice(0, 5).map((ranking, index) => ({
-    id: ranking.rank,
-    name: `${ranking.student_id.firstName} ${ranking.student_id.lastName}`,
-    score: ranking.attendance_percentage.toFixed(2),
-    initials: getInitials(`${ranking.student_id.firstName} ${ranking.student_id.lastName}`),
-    isCurrentUser: ranking.student_id.id === loggedUserId
+  const topFiveLeaders = rankings?.slice(0, 5).map((ranking, index) => ({
+    id: ranking?.rank,
+    name: `${ranking.student_id?.firstName} ${ranking?.student_id?.lastName}`,
+    score: ranking?.attendance_percentage?.toFixed(2),
+    initials: getInitials(`${ranking.student_id.firstName} ${ranking?.student_id.lastName}`),
+    isCurrentUser: ranking?.student_id?.id === loggedUserId
   }));
 
   // Check if user is not in top 5 and add them to the bottom
-  const isUserInTopFive = topFiveLeaders.some(leader => leader.isCurrentUser);
+  const isUserInTopFive = topFiveLeaders.some(leader => leader?.isCurrentUser);
   const displayLeaders = [...topFiveLeaders];
 
   if (userRanking && !isUserInTopFive) {
     displayLeaders.push({
-      id: userRanking.rank,
-      name: `${userRanking.student_id.firstName} ${userRanking.student_id.lastName}`,
-      score: userRanking.attendance_percentage.toFixed(2),
-      initials: getInitials(`${userRanking.student_id.firstName} ${userRanking.student_id.lastName}`),
+      id: userRanking?.rank,
+      name: `${userRanking?.student_id.firstName} ${userRanking.student_id.lastName}`,
+      score: userRanking?.attendance_percentage?.toFixed(2),
+      initials: getInitials(`${userRanking?.student_id?.firstName} ${userRanking.student_id?.lastName}`),
       isCurrentUser: true
     });
   }
@@ -224,7 +224,7 @@ export default function LeaderBoard() {
       <View className="">
         {displayLeaders.map((leader, index) => (
           <View
-            key={leader.id}
+            key={leader?.id}
             className={`flex-row items-center ${
               leader.id <= 3 ? "bg-primary/10 " : ""
             } ${
@@ -232,44 +232,44 @@ export default function LeaderBoard() {
                 ? "rounded-t-lg border-primary/70"
                 : ""
             } ${
-              index === 2 && displayLeaders.length <= 3 ? "rounded-b-lg border-primary/70" : ""
+              index === 2 && displayLeaders?.length <= 3 ? "rounded-b-lg border-primary/70" : ""
             } ${
               index === 4 && !isUserInTopFive ? "mt-2" : ""
             } ${
-              leader.id === 2 ? "border-primary/70" : ""
+              leader?.id === 2 ? "border-primary/70" : ""
             } ${
-              leader.isCurrentUser && leader.id > 3 ? "bg-primary/5 rounded-lg" : ""
+              leader?.isCurrentUser && leader.id > 3 ? "bg-primary/5 rounded-lg" : ""
             } py-2 px-3`}
           >
             <Text className="text-lg font-bold text-gray-800 w-8">
-              #{leader.id}
+              #{leader?.id}
             </Text>
             <View className="w-9 h-9 rounded-full bg-primary/20 border-[0.4px] border-primary/70 items-center justify-center">
               <Text className="text-primary text-sm">
-                {leader.initials}
+                {leader?.initials}
               </Text>
             </View>
             <View className="flex-1 ml-4">
               <View className="flex flex-row items-center gap-2">
                 <Text className="text-base font-semibold text-gray-800">
-                  {leader.name}
+                  {leader?.name}
                 </Text>
-                {leader.isCurrentUser && (
+                {leader?.isCurrentUser && (
                   <View className="flex flex-row items-center justify-center bg-primary px-3 py-[0.5px] rounded-full border border-primary">
                     <Text className="text-sm text-white font-medium">YOU</Text>
                   </View>
                 )}
               </View>
               <Text className="text text-primary font-semibold">
-                {leader.score}%
+                {leader?.score}%
               </Text>
             </View>
-            {leader.id <= 3 && (
+            {leader?.id <= 3 && (
               <Image
                 source={
-                  leader.id === 1
+                  leader?.id === 1
                     ? score1image
-                    : leader.id === 2
+                    : leader?.id === 2
                     ? score2image
                     : score3image
                 }
