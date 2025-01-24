@@ -4,6 +4,8 @@ import {
   View,
   Animated,
   ScrollView,
+  TouchableOpacity,
+  Modal,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
@@ -11,9 +13,11 @@ import {
   Ionicons,
   FontAwesome5,
   Feather,
+  MaterialIcons,
 } from "@expo/vector-icons";
-import { format } from "date-fns";
-import React from "react";
+import { format, subDays, isWithinInterval } from "date-fns";
+import React, { useState } from "react";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 import {
   useAttendanceStatsQuery,
@@ -226,6 +230,165 @@ const LoadingSkeleton = () => {
   );
 };
 
+const VerificationHistory = ({ verifications, isLoading }: { verifications: any[], isLoading: boolean }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [dateRange, setDateRange] = useState({
+    startDate: subDays(new Date(), 30), // Last 30 days by default
+    endDate: new Date(),
+  });
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [datePickerType, setDatePickerType] = useState<'start' | 'end'>('start');
+  const itemsPerPage = 5;
+
+  // Filter verifications by date range
+  const filteredVerifications = verifications?.filter((verification) => {
+    const scanDate = new Date(verification.scan_time);
+    return isWithinInterval(scanDate, {
+      start: dateRange.startDate,
+      end: dateRange.endDate,
+    });
+  }) || [];
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredVerifications.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedVerifications = filteredVerifications.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+
+  const handleDateChange = (event: any, selectedDate: Date | undefined) => {
+    setShowDatePicker(false);
+    if (selectedDate) {
+      setDateRange(prev => ({
+        ...prev,
+        [datePickerType === 'start' ? 'startDate' : 'endDate']: selectedDate
+      }));
+    }
+  };
+
+  const showDatePickerModal = (type: 'start' | 'end') => {
+    setDatePickerType(type);
+    setShowDatePicker(true);
+  };
+
+  const DateFilterButton = ({ date, type }: { date: Date, type: 'start' | 'end' }) => (
+    <TouchableOpacity
+      onPress={() => showDatePickerModal(type)}
+      className="flex-row items-center bg-gray-50 px-3 py-2 rounded-lg border border-gray-200"
+    >
+      <MaterialIcons name="calendar-today" size={16} color="#6366f1" />
+      <Text className="ml-2 text-sm text-gray-700">
+        {format(date, 'MMM dd, yyyy')}
+      </Text>
+    </TouchableOpacity>
+  );
+
+  const PaginationButton = ({ 
+    onPress, 
+    disabled, 
+    children 
+  }: { 
+    onPress: () => void, 
+    disabled: boolean, 
+    children: React.ReactNode 
+  }) => (
+    <TouchableOpacity
+      onPress={onPress}
+      disabled={disabled}
+      className={`px-3 py-1 rounded-lg flex-row items-center ${
+        disabled ? 'opacity-50' : ''
+      }`}
+    >
+      {children}
+    </TouchableOpacity>
+  );
+
+  if (isLoading) {
+    return <ActivityIndicator size="large" color="#6366f1" />;
+  }
+
+  return (
+    <View>
+      {/* Date Filter */}
+      <View className="flex-row items-center justify-between mb-4">
+        <View className="flex-row items-center gap-2">
+          <DateFilterButton date={dateRange.startDate} type="start" />
+          <Text className="text-gray-500">to</Text>
+          <DateFilterButton date={dateRange.endDate} type="end" />
+        </View>
+      </View>
+
+      {/* Verifications List */}
+      {filteredVerifications.length > 0 ? (
+        <View className="border-[.5px] border-gray-200/80 p-4 rounded-lg">
+          {paginatedVerifications.map((verification: any, index: number) => (
+            <VerificationItem
+              key={verification.id}
+              verification={verification}
+              isLast={index === paginatedVerifications.length - 1}
+            />
+          ))}
+
+          {/* Pagination Controls */}
+          <View className="flex-row items-center justify-between mt-6 pt-6 border-t border-gray-100 mb-2">
+            <PaginationButton
+              onPress={() => setCurrentPage(prev => prev - 1)}
+              disabled={currentPage === 1}
+            >
+              <Feather
+                name="chevron-left"
+                size={20}
+                color={currentPage === 1 ? '#9CA3AF' : '#6366f1'}
+              />
+              <Text className={`ml-1 ${currentPage === 1 ? 'text-gray-400' : 'text-indigo-600'}`}>
+                Previous
+              </Text>
+            </PaginationButton>
+
+            <View className="bg-gray-50 px-3 py-1 rounded-lg">
+              <Text className="text-sm text-gray-600">
+                Page {currentPage} of {totalPages}
+              </Text>
+            </View>
+
+            <PaginationButton
+              onPress={() => setCurrentPage(prev => prev + 1)}
+              disabled={currentPage === totalPages}
+            >
+              <Text className={`mr-1 ${
+                currentPage === totalPages ? 'text-gray-400' : 'text-indigo-600'
+              }`}>
+                Next
+              </Text>
+              <Feather
+                name="chevron-right"
+                size={20}
+                color={currentPage === totalPages ? '#9CA3AF' : '#6366f1'}
+              />
+            </PaginationButton>
+          </View>
+        </View>
+      ) : (
+        <Text className="text-gray-500 text-center">
+          No verifications found for the selected date range
+        </Text>
+      )}
+
+      {/* Date Picker Modal */}
+      {showDatePicker && (
+        <DateTimePicker
+          value={datePickerType === 'start' ? dateRange.startDate : dateRange.endDate}
+          mode="date"
+          display="default"
+          onChange={handleDateChange}
+          maximumDate={new Date()}
+        />
+      )}
+    </View>
+  );
+};
+
 const AttendanceStates = () => {
   const { user } = useAuthStore();
 
@@ -252,7 +415,7 @@ const AttendanceStates = () => {
 
   return (
     <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-      <View className="p-3">
+      <View className="p-3 pb-24">
         {/* Main Stats */}
         <View className="flex-row mb-4">
           <StatCard
@@ -316,27 +479,14 @@ const AttendanceStates = () => {
         </View>
 
         {/* Verification History */}
-        <View className="mb-3">
+        <View className="mb-24">
           <Text className="text-lg font-semibold mb-3">
             Verification History
           </Text>
-          {isVerificationsLoading ? (
-            <ActivityIndicator size="large" color="#6366f1" />
-          ) : verifications && verifications.length > 0 ? (
-            <View className=" border-[.5px] border-gray-200/80 p-4 rounded-lg">
-              {verifications.map((verification: any, index: number) => (
-                <VerificationItem
-                  key={verification.id}
-                  verification={verification}
-                  isLast={index === verifications.length - 1}
-                />
-              ))}
-            </View>
-          ) : (
-            <Text className="text-gray-500 text-center">
-              No verification history available
-            </Text>
-          )}
+          <VerificationHistory 
+            verifications={verifications || []} 
+            isLoading={isVerificationsLoading} 
+          />
         </View>
 
         {/* Achievements Section */}
