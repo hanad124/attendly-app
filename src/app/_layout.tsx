@@ -11,7 +11,7 @@ import { store } from "@/stores/RTK/store";
 import "../global.css";
 import BottomSheet from "@/components/BottomSheet";
 
-import logo from "../assets/images/login-logo.png";
+import logo from "../assets/images/loading-logo.png";
 
 export default function RootLayout() {
   const { isAuthenticated, initialized, initialize } = useAuthStore();

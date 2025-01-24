@@ -165,7 +165,7 @@ export default function LeaderBoard() {
   const user = useAuthStore((state) => state.user);
   const loggedUserId = user?.id;
 
-  const rankings = leaderboardData?.data?.results[1]?.rankings || [];
+  const rankings = leaderboardData?.data?.results[0]?.rankings || [];
 
   // Find logged user's ranking
   const userRanking = rankings.find(ranking => ranking?.student_id?.id === loggedUserId);

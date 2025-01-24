@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter } from "expo-router";
 import {
   View,
@@ -10,8 +10,9 @@ import {
   Linking,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from "react-native";
-import { CameraView } from "expo-camera";
+import { CameraView, Camera } from "expo-camera";
 import { Header } from "@/components/shared/Header";
 import LocationService from "../../services/LocationService";
 import * as Location from "expo-location";
@@ -26,15 +27,33 @@ export default function Scan() {
   const [isLocationEnabled, setIsLocationEnabled] = useState(false);
   const [status, setStatus] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   const locationWatchId = useRef<Location.LocationSubscription | null>(null);
   const user = useAuthStore((state) => state.user);
   const router = useRouter();
   const [verifyAttendance] = useVerifyAttendanceMutation();
 
-  const openLocationSettings = () => {
-    Platform.OS === "ios"
-      ? Linking.openURL("app-settings:")
-      : Linking.openSettings();
+  useEffect(() => {
+    (async () => {
+      const cameraPermission = await Camera.requestCameraPermissionsAsync();
+      setHasCameraPermission(cameraPermission.status === 'granted');
+      
+      if (cameraPermission.status !== 'granted') {
+        setError('Camera permission is required to scan QR codes');
+      }
+
+      // Check location permission status
+      const locationStatus = await Location.getForegroundPermissionsAsync();
+      setIsLocationEnabled(locationStatus.granted);
+    })();
+  }, []);
+
+  const openLocationSettings = async () => {
+    if (Platform.OS === "ios") {
+      Linking.openURL("app-settings:");
+    } else {
+      Linking.openSettings();
+    }
   };
 
   const startLocationWatch = async () => {
@@ -194,6 +213,8 @@ export default function Scan() {
         },
       }).unwrap();
 
+      console.log("Verification result:", result);
+
       if (result.verification?.verification_status === "Success") {
         router.push({
           pathname: "/attendance-success",
@@ -203,13 +224,25 @@ export default function Scan() {
           },
         });
       } else {
-        throw new Error(result.message || "Verification failed");
+        // Handle different verification failure scenarios
+        let errorMessage = "Verification failed. ";
+        
+        if (result.verification?.verification_status === "Failed_Location") {
+          const distance = Math.round(result.details?.distance_from_target || 0);
+          errorMessage = `You are ${distance}m away from the attendance location. Please move closer to mark your attendance.`;
+        } else if (!result.details?.time_valid) {
+          errorMessage = "Attendance time has expired or not yet started.";
+        } else if (result.details?.already_verified) {
+          errorMessage = "You have already marked your attendance for this session.";
+        }
+
+        throw new Error(errorMessage);
       }
     } catch (error) {
       setError(
         error instanceof Error
           ? error.message
-          : "Verification failed. Try again."
+          : "Verification failed. Please try again."
       );
       setIsScanning(true);
     } finally {
@@ -221,23 +254,38 @@ export default function Scan() {
     }
   };
 
-  
-
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       <SafeAreaView style={styles.safeArea}>
         <Header title="Scan QR Code" showBackButton={true} />
-        <CameraView
-          style={styles.camera}
-          facing="back"
-          onBarcodeScanned={
-            isScanning && !isProcessing ? handleBarCodeScanned : undefined
-          }
-          barcodeScannerSettings={{
-            barcodeTypes: ["qr"],
-          }}
-        />
+        {hasCameraPermission === null ? (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color="#fff" />
+            <Text style={styles.statusText}>Requesting camera permission...</Text>
+          </View>
+        ) : hasCameraPermission === false ? (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>No access to camera</Text>
+            <TouchableOpacity
+              style={styles.enableButton}
+              onPress={() => Linking.openSettings()}
+            >
+              <Text style={styles.buttonText}>Enable Camera Access</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <CameraView
+            style={styles.camera}
+            facing="back"
+            onBarcodeScanned={
+              isScanning && !isProcessing ? handleBarCodeScanned : undefined
+            }
+            barcodeScannerSettings={{
+              barcodeTypes: ["qr"],
+            }}
+          />
+        )}
         {isProcessing && (
           <View style={styles.loadingOverlay}>
             <ActivityIndicator size="large" color="#fff" />
@@ -248,7 +296,7 @@ export default function Scan() {
       {error && (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{error}</Text>
-          {!isLocationEnabled && (
+          {(!isLocationEnabled && error.toLowerCase().includes('location')) && (
             <TouchableOpacity
               style={styles.enableButton}
               onPress={openLocationSettings}

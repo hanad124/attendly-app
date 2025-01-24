@@ -5,15 +5,15 @@ import {
   TouchableOpacity,
   Animated,
   ScrollView,
-  Alert,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Header } from "@/components/shared/Header";
 import { router } from "expo-router";
 import { MaterialIcons, Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import { useGetSelfQuery } from "@/stores/RTK/user";
 import { useAuthStore } from "@/stores/auth";
+import CustomAlert from "@/components/shared/CustomAlert";
 
 const LoadingSkeleton = () => {
   const pulseAnim = React.useRef(new Animated.Value(0.3)).current;
@@ -90,30 +90,19 @@ export default function Account() {
       ],
     },
   });
+  const [showLogoutAlert, setShowLogoutAlert] = useState(false);
 
   const handleLogout = async () => {
-    Alert.alert(
-      "Sign Out",
-      "Are you sure you want to sign out?",
-      [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
-        {
-          text: "Sign Out",
-          style: "destructive",
-          onPress: async () => {
-            try {
-              await useAuthStore.getState().logout();
-              router.replace("/(auth)/login");
-            } catch (error) {
-              console.error('Error during logout:', error);
-            }
-          }
-        }
-      ]
-    );
+    setShowLogoutAlert(true);
+  };
+
+  const confirmLogout = async () => {
+    try {
+      await useAuthStore.getState().logout();
+      router.replace("/(auth)/login");
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   };
 
   if (isLoading) {
@@ -203,8 +192,23 @@ export default function Account() {
           className="mb-24"
         >
           <MaterialIcons name="logout" size={20} color="#ef4444" />
-          <Text style={styles.logoutText}>Sign Out</Text>
+          <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
+
+        <CustomAlert
+          visible={showLogoutAlert}
+          title="Logout"
+          message="Are you sure you want to logout of your account?"
+          type="warning"
+          primaryButton={{
+            text: "Logout",
+            onPress: confirmLogout,
+          }}
+          secondaryButton={{
+            text: "Cancel",
+            onPress: () => setShowLogoutAlert(false),
+          }}
+        />
       </ScrollView>
     </SafeAreaView>
   );
