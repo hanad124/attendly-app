@@ -57,13 +57,7 @@ export default function LoginScreen() {
         Device.modelId || 'unknown'
       ]);
       
-      const deviceId = `${deviceName || 'unknown'}-${modelId}`.toLowerCase();
-      
-      console.log('Device info:', {
-        deviceName,
-        modelId,
-        generatedDeviceId: deviceId
-      });
+      const deviceId = `${deviceName}-${modelId}`.toLowerCase();
       
       // Collect device information
       const deviceInfo = {
@@ -72,11 +66,6 @@ export default function LoginScreen() {
         device_os: Device.osName || Platform.OS,
         device_os_version: Device.osVersion || Platform.Version.toString()
       };
-
-      console.log('Attempting login with:', {
-        username: data.username,
-        deviceInfo
-      });
 
       await login(data.username, data.password, deviceInfo);
       
@@ -88,15 +77,10 @@ export default function LoginScreen() {
         visibilityTime: 4000,
       });
 
-        router.replace("/(tabs)");
+      router.replace("/(tabs)");
       
     } catch (error: any) {
-      console.log('Login error details:', {
-        message: error?.message,
-        status: error?.status,
-        response: error?.response?.data
-      });
-
+      console.error(error);
       let errorMessage = error?.message || 'An error occurred while logging in';
       
       // Handle specific error cases
