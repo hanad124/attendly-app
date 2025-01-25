@@ -53,6 +53,15 @@ export interface LoginResponse {
 export interface LoginCredentials {
   username: string;
   password: string;
+  deviceId: string;
+  devices: [{
+    device_id: string;
+    device_model: string;
+    device_os: string;
+    device_os_version: string;
+    last_login?: Date;
+    is_active?: boolean;
+  }];
 }
 
 export interface ApiError {
@@ -63,6 +72,12 @@ export interface ApiError {
 export const authService = {
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     try {
+      console.log('Login request data:', {
+        username: credentials.username,
+        deviceId: credentials.deviceId,
+        devices: credentials.devices
+      });
+      
       const response = await axiosInstance.post<LoginResponse>("/auth/student-login", credentials);
       
       if (response.data.tokens.access.token) {
@@ -72,8 +87,9 @@ export const authService = {
       
       return response.data;
     } catch (error: any) {
+      console.log('Server error response:', error.response?.data);
       const apiError: ApiError = {
-        message: error.response?.data?.message || "Login failed",
+        message: error.response?.data?.message || error.message || "Login failed",
         status: error.response?.status || 500
       };
       throw apiError;

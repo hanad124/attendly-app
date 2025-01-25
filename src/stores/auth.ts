@@ -1,13 +1,22 @@
 import { create } from 'zustand';
 import { authService, LoginResponse } from '@/services/auth';
 
+interface DeviceInfo {
+  device_id: string;
+  device_model: string;
+  device_os: string;
+  device_os_version: string;
+  last_login?: Date;
+  is_active?: boolean;
+}
+
 interface AuthState {
   user: LoginResponse['user'] | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   initialized: boolean;
   initialize: () => Promise<void>;
-  login: (username: string, password: string) => Promise<boolean>;
+  login: (username: string, password: string, deviceInfo: DeviceInfo) => Promise<boolean>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
 }
@@ -18,14 +27,19 @@ export const useAuthStore = create<AuthState>((set) => ({
   isLoading: true,
   initialized: false,
 
-  login: async (username: string, password: string) => {
+  login: async (username: string, password: string, deviceInfo: DeviceInfo) => {
     try {
-      const response = await authService.login({ username, password });
+      const response = await authService.login({ 
+        username, 
+        password,
+        deviceId: deviceInfo.device_id,
+        devices: [deviceInfo]
+      });
       set({ user: response.user, isAuthenticated: true });
       return true;
     } catch (error) {
       console.error('Login error:', error);
-      return false;
+      throw error; // Propagate the error to be handled by the login screen
     }
   },
 

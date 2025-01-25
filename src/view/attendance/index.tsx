@@ -24,6 +24,7 @@ import {
   useGetAttendanceVerificationsQuery,
 } from "@/stores/RTK/attendance";
 import { useAuthStore } from "@/stores/auth";
+import { Platform } from "react-native";
 
 const StatCard = ({ title, value, icon, color }: any) => (
   <View className="bg-white rounded-xl p-4 flex-1 mx-1 border-[.5px] border-gray-200/80">
@@ -233,7 +234,7 @@ const LoadingSkeleton = () => {
 const VerificationHistory = ({ verifications, isLoading }: { verifications: any[], isLoading: boolean }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [dateRange, setDateRange] = useState({
-    startDate: subDays(new Date(), 30), // Last 30 days by default
+    startDate: subDays(new Date(), 30),
     endDate: new Date(),
   });
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -258,11 +259,12 @@ const VerificationHistory = ({ verifications, isLoading }: { verifications: any[
   );
 
   const handleDateChange = (event: any, selectedDate: Date | undefined) => {
-    setShowDatePicker(false);
+    const currentDate = selectedDate || (datePickerType === 'start' ? dateRange.startDate : dateRange.endDate);
+    setShowDatePicker(Platform.OS === 'ios');
     if (selectedDate) {
       setDateRange(prev => ({
         ...prev,
-        [datePickerType === 'start' ? 'startDate' : 'endDate']: selectedDate
+        [datePickerType === 'start' ? 'startDate' : 'endDate']: currentDate
       }));
     }
   };
@@ -380,7 +382,7 @@ const VerificationHistory = ({ verifications, isLoading }: { verifications: any[
         <DateTimePicker
           value={datePickerType === 'start' ? dateRange.startDate : dateRange.endDate}
           mode="date"
-          display="default"
+          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
           onChange={handleDateChange}
           maximumDate={new Date()}
         />

@@ -7,6 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import Toast from 'react-native-toast-message'
 import { ActivityIndicator } from 'react-native'
+import * as Device from 'expo-device'
 
 const loginSchema = yup.object({
   username: yup
@@ -41,7 +42,7 @@ export default function LoginScreen() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.replace('/(tabs)')
+        router.replace("/(tabs)");
     }
   }, [isAuthenticated])
 
@@ -50,33 +51,69 @@ export default function LoginScreen() {
     
     setIsSubmitting(true);
     try {
-      const res = await login(data.username, data.password);
+      // Get device information
+      const [deviceName, modelId] = await Promise.all([
+        Device.deviceName || 'unknown',
+        Device.modelId || 'unknown'
+      ]);
+      
+      const deviceId = `${deviceName || 'unknown'}-${modelId}`.toLowerCase();
+      
+      console.log('Device info:', {
+        deviceName,
+        modelId,
+        generatedDeviceId: deviceId
+      });
+      
+      // Collect device information
+      const deviceInfo = {
+        device_id: deviceId,
+        device_model: Device.modelName || 'Unknown Model',
+        device_os: Device.osName || Platform.OS,
+        device_os_version: Device.osVersion || Platform.Version.toString()
+      };
 
-      console.log({
-        res
-      })
-      if (res) {
-        Toast.show({
-          type: 'success',
-          text1: 'Success',
-          text2: 'Successfully logged in',
-          position: 'top',
-        });
-        router.replace('/(tabs)');
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2: 'Invalid credentials',
-          position: 'top',
-        });
-      }
+      console.log('Attempting login with:', {
+        username: data.username,
+        deviceInfo
+      });
+
+      await login(data.username, data.password, deviceInfo);
+      
+      Toast.show({
+        type: 'success',
+        text1: 'Success',
+        text2: 'Successfully logged in',
+        position: 'top',
+        visibilityTime: 4000,
+      });
+
+        router.replace("/(tabs)");
+      
     } catch (error: any) {
+      console.log('Login error details:', {
+        message: error?.message,
+        status: error?.status,
+        response: error?.response?.data
+      });
+
+      let errorMessage = error?.message || 'An error occurred while logging in';
+      
+      // Handle specific error cases
+      if (errorMessage.includes('Unregistered device')) {
+        errorMessage = 'This device is not registered. Please contact your administrator to register this device.';
+      } else if (error?.status === 401 || error?.response?.status === 401) {
+        errorMessage = 'Invalid username or password';
+      }
+
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: error?.response?.data?.message || 'An error occurred while logging in',
+        text1: 'Login Failed',
+        text2: errorMessage,
         position: 'top',
+        visibilityTime: 4000,
+        autoHide: true,
+        topOffset: 30,
       });
     } finally {
       setIsSubmitting(false);
@@ -92,7 +129,7 @@ export default function LoginScreen() {
         <View className="flex-1 px-4 pt-16 pb-6 flex justify-center items-center bg-primary -mb-28">
           <View className='mt-6 mb-28'>
             <Image
-              source={require('../../../assets/images/login-logo.png')}
+              source={require('../../../assets/images/loading-logo.png')}
               className="w-32 h-32"
               resizeMode="contain"
             />
@@ -194,8 +231,23 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
         </View>
-        <Toast />
       </ScrollView>
+      <Toast
+        config={{
+          error: ({ text1, text2 }) => (
+            <View className="bg-red-100 p-4 rounded-lg mx-4 my-2 border border-red-400">
+              <Text className="text-red-800 font-bold">{text1}</Text>
+              <Text className="text-red-600">{text2}</Text>
+            </View>
+          ),
+          success: ({ text1, text2 }) => (
+            <View className="bg-green-100 p-4 rounded-lg mx-4 my-2 border border-green-400">
+              <Text className="text-green-800 font-bold">{text1}</Text>
+              <Text className="text-green-600">{text2}</Text>
+            </View>
+          ),
+        }}
+      />
     </KeyboardAvoidingView>
   )
 }

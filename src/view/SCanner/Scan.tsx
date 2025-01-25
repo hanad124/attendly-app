@@ -10,7 +10,6 @@ import {
   Linking,
   TouchableOpacity,
   ActivityIndicator,
-  Alert,
 } from "react-native";
 import { CameraView, Camera } from "expo-camera";
 import { Header } from "@/components/shared/Header";
