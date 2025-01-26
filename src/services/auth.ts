@@ -39,7 +39,7 @@ export interface User {
   isEmailVerified: boolean;
   username: string;
   status: string;
-  semester?:  Partial<Semester>;
+  semester?: Partial<Semester>;
   dateCreated: string;
   lastLogin: string;
   id: string;
@@ -53,15 +53,14 @@ export interface LoginResponse {
 export interface LoginCredentials {
   username: string;
   password: string;
-  deviceId: string;
-  devices: [{
+  deviceInfo: {
     device_id: string;
     device_model: string;
     device_os: string;
     device_os_version: string;
     last_login?: Date;
     is_active?: boolean;
-  }];
+  }
 }
 
 export interface ApiError {
@@ -72,25 +71,31 @@ export interface ApiError {
 export const authService = {
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
     try {
-      console.log('Login request data:', {
-        username: credentials.username,
-        deviceId: credentials.deviceId,
-        devices: credentials.devices
-      });
-      
-      const response = await axiosInstance.post<LoginResponse>("/auth/student-login", credentials);
-      
+      console.log("Login request data:", credentials);
+
+      const response = await axiosInstance.post<LoginResponse>(
+        "/auth/student-login",
+        credentials
+      );
+
       if (response.data.tokens.access.token) {
-        await SecureStore.setItemAsync("token", response.data.tokens.access.token);
-        await SecureStore.setItemAsync("refreshToken", response.data.tokens.refresh.token);
+        await SecureStore.setItemAsync(
+          "token",
+          response.data.tokens.access.token
+        );
+        await SecureStore.setItemAsync(
+          "refreshToken",
+          response.data.tokens.refresh.token
+        );
       }
-      
+
       return response.data;
     } catch (error: any) {
-      console.log('Server error response:', error.response?.data);
+      console.log("Server error response:", error.response?.data);
       const apiError: ApiError = {
-        message: error.response?.data?.message || error.message || "Login failed",
-        status: error.response?.status || 500
+        message:
+          error.response?.data?.message || error.message || "Login failed",
+        status: error.response?.status || 500,
       };
       throw apiError;
     }
@@ -103,7 +108,7 @@ export const authService = {
     } catch (error: any) {
       const apiError: ApiError = {
         message: error.message || "Logout failed",
-        status: 500
+        status: 500,
       };
       throw apiError;
     }

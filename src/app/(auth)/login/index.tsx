@@ -75,13 +75,15 @@ export default function LoginScreen() {
         device_model: Device.modelName || "Unknown Model",
         device_os: Device.osName || Platform.OS,
         device_os_version: Device.osVersion || Platform.Version.toString(),
-        // installation_id: uniqueId,
-        // brand: Device.brand || 'Unknown Brand'
       };
 
-      const testData = await login(data.username, data.password, deviceInfo);
+      const loginResponse = await login({
+        username: data.username,
+        password: data.password,
+        deviceInfo,
+      });
 
-      console.log("Login response:", testData);
+      console.log("Login response:", loginResponse);
 
       Toast.show({
         type: "success",

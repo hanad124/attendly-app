@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { authService, LoginResponse } from '@/services/auth';
+import { create } from "zustand";
+import { authService, LoginResponse } from "@/services/auth";
 
 interface DeviceInfo {
   device_id: string;
@@ -10,13 +10,19 @@ interface DeviceInfo {
   is_active?: boolean;
 }
 
+interface LoginParams {
+  username: string;
+  password: string;
+  deviceInfo: DeviceInfo;
+}
+
 interface AuthState {
-  user: LoginResponse['user'] | null;
+  user: LoginResponse["user"] | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   initialized: boolean;
   initialize: () => Promise<void>;
-  login: (username: string, password: string, deviceInfo: DeviceInfo) => Promise<boolean>;
+  login: (params: LoginParams) => Promise<boolean>;
   logout: () => Promise<void>;
   checkAuth: () => Promise<void>;
 }
@@ -27,18 +33,17 @@ export const useAuthStore = create<AuthState>((set) => ({
   isLoading: true,
   initialized: false,
 
-  login: async (username: string, password: string, deviceInfo: DeviceInfo) => {
+  login: async ({ username, password, deviceInfo }) => {
     try {
-      const response = await authService.login({ 
-        username, 
+      const response = await authService.login({
+        username,
         password,
-        deviceId: deviceInfo.device_id,
-        devices: [deviceInfo]
+        deviceInfo
       });
       set({ user: response.user, isAuthenticated: true });
       return true;
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
       throw error; // Propagate the error to be handled by the login screen
     }
   },
@@ -48,7 +53,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       await authService.logout();
       set({ user: null, isAuthenticated: false });
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     }
   },
 
@@ -61,7 +66,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         set({ user, isAuthenticated: true });
       }
     } catch (error) {
-      console.error('Check auth error:', error);
+      console.error("Check auth error:", error);
     } finally {
       set({ isLoading: false });
     }
@@ -72,7 +77,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       await useAuthStore.getState().checkAuth();
       set({ initialized: true });
     } catch (error) {
-      set({ initialized: true }); 
+      set({ initialized: true });
     }
   },
 }));
