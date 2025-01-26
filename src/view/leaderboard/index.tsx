@@ -8,7 +8,10 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import { SafeAreaView as SafeAreaContext, Edge } from "react-native-safe-area-context";
+import {
+  SafeAreaView as SafeAreaContext,
+  Edge,
+} from "react-native-safe-area-context";
 import LeaderboardHeader from "./components/LeaderboardHeader";
 import { LeaderboardEntry } from "./types";
 import { useGetLeaderboardQuery } from "@/stores/RTK/leaderboard";
@@ -174,12 +177,12 @@ const Leaderboard = () => {
 
   // Get users from rank 4 onwards
   const otherUsers = rankings.slice(3).map((ranking) => {
-    const isCurrentUser = ranking.student_id.id === loggedUserId;
+    const isCurrentUser = ranking?.student_id?.id === loggedUserId;
 
     return {
       id: ranking._id,
       rank: ranking.rank,
-      name: ranking?.student_id.firstName + " " + ranking?.student_id.lastName,
+      name: ranking?.student_id?.firstName + " " + ranking?.student_id.lastName,
       username: `${ranking?.student_id?.username}`,
       exp: ranking.points,
       avatar: undefined,
@@ -235,8 +238,11 @@ const Leaderboard = () => {
     ) : null;
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'white' }}>
-      <SafeAreaContext edges={['top']} style={{ backgroundColor: PRIMARY_COLOR }} />
+    <View style={{ flex: 1, backgroundColor: "white" }}>
+      <SafeAreaContext
+        edges={["top"]}
+        style={{ backgroundColor: PRIMARY_COLOR }}
+      />
       <View style={styles.container} className="bg-white">
         <FlatList
           ListHeaderComponent={() => <LeaderboardHeader topThree={topThree} />}
@@ -247,7 +253,10 @@ const Leaderboard = () => {
           contentContainerStyle={styles.listContent}
         />
       </View>
-      <SafeAreaContext edges={['bottom']} style={{ backgroundColor: 'white' }} />
+      <SafeAreaContext
+        edges={["bottom"]}
+        style={{ backgroundColor: "white" }}
+      />
     </View>
   );
 };

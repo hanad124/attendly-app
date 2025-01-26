@@ -175,7 +175,7 @@ export default function LeaderBoard() {
     id: ranking?.rank,
     name: `${ranking.student_id?.firstName} ${ranking?.student_id?.lastName}`,
     score: ranking?.attendance_percentage?.toFixed(2),
-    initials: getInitials(`${ranking.student_id.firstName} ${ranking?.student_id.lastName}`),
+    initials: getInitials(`${ranking?.student_id?.firstName} ${ranking?.student_id?.lastName}`),
     isCurrentUser: ranking?.student_id?.id === loggedUserId
   }));
 
